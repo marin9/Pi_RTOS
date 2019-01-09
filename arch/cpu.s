@@ -8,8 +8,8 @@ irq_vectors:
         ldr pc, _interrupt_vector_h
         ldr pc, _fast_interrupt_vector_h
 
-_reset_h:														.word _reset
-_undefined_instruction_vector_h:		.word _undef_instruction
+_reset_h:							.word _reset
+_undefined_instruction_vector_h:	.word _undef_instruction
 _software_interrupt_vector_h:       .word _software_interrupt
 _prefetch_abort_vector_h:           .word _prefetch_abort
 _data_abort_vector_h:               .word _data_abort
@@ -91,29 +91,21 @@ _reset:
 _undef_instruction:
 	ldr sp, =kernel_stack
 	bl undefined_instruction
-	bl .
+	b .
 
 _software_interrupt:
-	ldr sp, =kernel_stack
-	bl software_interrupt
-	bl .
+	b .
 
 _prefetch_abort:
-	ldr sp, =kernel_stack
-	bl prefetch_abort
 	b .
 
 _data_abort:
-	ldr sp, =kernel_stack
-	bl data_abort
 	b .
 
 _not_used:
 	b .
 
 _fiq:
-	ldr sp, =kernel_stack
-	bl fast_interrupt_handler
 	b .
 
 

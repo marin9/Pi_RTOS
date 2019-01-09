@@ -47,10 +47,10 @@ $(TARGET): $(OBJ_DIR) $(OBJ_DIR)/$(ELF) $(INCLUDE_DIR)
 	@$(CC)-objcopy $(OBJ_DIR)/$(ELF) -O binary $(TARGET)
 
 $(OBJ_DIR)/$(ELF): $(LINKER) $(OBJ_ARCHC) $(OBJ_ARCHS) \
-				   $(OBJ_LIBC) $(OBJ_KERNELC) $(OBJ_PROGC)
+				   $(OBJ_KERNELC) $(OBJ_PROGC)
 	@echo "Link files"
 	@$(CC)-gcc -T $(LINKER) $(OBJ_ARCHC) $(OBJ_ARCHS) \
-				  $(OBJ_LIBC) $(OBJ_KERNELC) $(OBJ_PROGC) \
+				  $(OBJ_KERNELC) $(OBJ_PROGC) \
 				  -o $@ $(LDFLAGS)
 
 

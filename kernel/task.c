@@ -1,5 +1,5 @@
 #include "task.h"
-#include "lib.h"
+#include "string.h"
 #include "cpu.h"
 #include "mem.h"
 #include "sem.h"

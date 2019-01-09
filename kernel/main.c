@@ -8,7 +8,7 @@
 
 
 void main_thread(){
-	//test_sem();
+	test();
 }
 
 

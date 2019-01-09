@@ -1,6 +1,6 @@
 #include "api.h"
 #include "err.h"
-#include "lib.h"
+#include "string.h"
 #include "stdio.h"
 #include "mem.h"
 #include "time.h"

@@ -1,5 +1,6 @@
 #pragma once
 
+void test();
 void test_stdio();
 void test_memory();
 void test_time();

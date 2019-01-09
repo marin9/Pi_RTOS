@@ -50,22 +50,6 @@ void interrupt_handler(){
   }
 }
 
-void fast_interrupt_handler(){
-  ASSERT(0, "Fast interrupt.");
-}
-
 void undefined_instruction(){
   ASSERT(0, "Undefined instruction.");
-}
-
-void software_interrupt(){
-  ASSERT(0, "Software interrupt.");
-}
-
-void prefetch_abort(){
-  ASSERT(0, "Prefetch abort.");
-}
-
-void data_abort(){
-  ASSERT(0, "Data abort.");
 }

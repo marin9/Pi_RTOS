@@ -1,4 +1,4 @@
-#include "lib.h"
+#include "string.h"
 #include "err.h"
 
 

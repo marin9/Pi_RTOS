@@ -1,6 +1,8 @@
 #include "stdio.h"
 #include "uart.h"
 #include "string.h"
+#include "task.h"
+#include "cpu.h"
 #include "err.h"
 
 
@@ -8,35 +10,68 @@ void stdio_init(){
   uart_init();
 }
 
-int getc(){
-  return uart_recv();
+int getc(char *c){
+  int d;
+  disable_interrupts();
+  while(!uart_recv(&d)){
+    task_scheduler();
+  }
+  enable_interrupts();
+  *c=(char)d;
+  return 1;
 }
 
 int putc(char c){
-  if(c==127){
-  	uart_send('\b');
-  	uart_send(' ');
-  	uart_send('\b');
-  }else if(c=='\n' || c=='\r'){
-  	uart_send('\r');
-  	uart_send('\n');
-	}else{
-  	uart_send(c);
-	}
+  int d=(int)c;
+  disable_interrupts();
+  while(!uart_send(d)){
+    task_scheduler();
+  }
+  enable_interrupts();
   return 1;
+}
+
+int gets(char *s, int n){
+  int i;
+  char c;
+  ASSERT(s, "Null pointer.");
+
+  i=0;
+  while(i<n){
+    getc(&c);
+
+    if(c==127){
+      if(i>0){
+        --i;
+        puts("\b \b");
+      }
+      continue;
+    }
+
+    s[i]=c;
+    putc(c);
+    if(c=='\r'){
+      break;
+    }
+    ++i;
+  }
+  s[i]=0;
+  puts("\r\n");
+  return i;
 }
 
 int puts(char *s){
   int n=0;
-	while(*s!='\0'){
-  		n += putc(*s++);
+	while(*s){
+  		n+=putc(*s);
+      ++s;
 	}
   return n;
 }
 
 int printf(char *format, ...){
-  char buffer[256];
+  char buffer[128];
   ASSERT(format, "Null pointer.");
-  vssprintf(buffer, 256, &format);
+  vssprintf(buffer, 128, &format);
   return puts(buffer);
 }

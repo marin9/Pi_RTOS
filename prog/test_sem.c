@@ -1,6 +1,7 @@
 #include "api.h"
 
 // Test count
+/*
 int p=10;
 int s1, s2;
 int buffer[5];
@@ -11,7 +12,7 @@ void proizv(void *arg){
   while(1){
     n++;
     TaskSleep(TaskSelf(), 300);
-    Printf("Proizveo: %d\n", n);
+    Printf("Proizveo: %d\r\n", n);
     SemWait(s1);
     buffer[i]=n;
     ++i;
@@ -29,7 +30,7 @@ void trosi(){
     ++iz;
     if(iz>=5) iz=0;
     SemPost(s1);
-    Printf("Potrosio:\t%d\n", v);
+    Printf("Potrosio:\t%d\r\n", v);
     TaskSleep(TaskSelf(), 1000);
   }
 }
@@ -40,13 +41,13 @@ void test_sem(){
   s2=SemCreate(0, SEM_COUNT);
   TaskCreate(proizv, &p, 1);
   TaskCreate(trosi, 0, 1);
-  Printf("Main exit\n");
+  Printf("Main exit\r\n");
 }
-
+*/
 
 
 // Test bin
-/*
+
 int s1;
 
 void delay(){
@@ -63,7 +64,7 @@ void tx(){
 		//while(SemTryWait(s1));
 		for(i=0;i<5;++i){
 			delay();
-			Printf("%d\n", TaskSelf());
+			Printf("%d\r\n", TaskSelf());
 		}
 		SemPost(s1);
 		for(i=0;i<5;++i){
@@ -74,13 +75,12 @@ void tx(){
 
 
 void test_sem(){
-	Printf("TEST BIN SEM\n");
+	Printf("TEST BIN SEM\r\n");
 	s1=SemCreate(1, SEM_BIN);
 	int i;
 	for(i=0;i<5;++i){
 		TaskCreate(tx, 0, 2);
 	}
-	Printf("Main exit\n");
+	Printf("Main exit\r\n");
 }
 
-*/

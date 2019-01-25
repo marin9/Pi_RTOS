@@ -3,8 +3,7 @@
 #include "sem.h"
 
 // Console
-int Getc();
-int Putc(int c);
+int Gets(char *s, int n);
 int Printf(char *format, ...);
 
 // Memory

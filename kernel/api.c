@@ -9,12 +9,8 @@
 
 
 // Console
-int Getc(){
-  return getc();
-}
-
-int Putc(int c){
-  return putc(c);
+int Gets(char *s, int n){
+  return gets(s, n);
 }
 
 int Printf(char *format, ...){

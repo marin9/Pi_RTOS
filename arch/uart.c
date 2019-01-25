@@ -8,12 +8,20 @@ void uart_init(){
 	*UART0_DR;
 }
 
-void uart_send(int c){
-	while((*UART0_FR)&(1<<5));
-	*UART0_DR=(unsigned int)c;
+int uart_send(int c){
+	if((*UART0_FR)&(1<<5)){
+		return 0;
+	}else{
+		*UART0_DR=(unsigned int)c;
+		return 1;
+	}
 }
 
-int uart_recv(){
-	if((*UART0_FR)&(1<<4)) return 0;
-	else return *UART0_DR;
+int uart_recv(int *c){
+	if((*UART0_FR)&(1<<4)){
+		return 0;
+	}else{
+		*c=*UART0_DR;
+		return 1;
+	}
 }

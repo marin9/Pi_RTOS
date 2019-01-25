@@ -1,6 +1,9 @@
 Real time operating system for ARM
-
 API:
+
+<stdio.h>
++	Gets
++	Printf
 
 <memory.h>
 +	Malloc
@@ -43,8 +46,3 @@ API:
 +	list_remove
 +	list_getFirst
 +	list_getById
-
-<stdio.h>
-+	getc
-+	putc
-+	printf

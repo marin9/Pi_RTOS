@@ -10,7 +10,7 @@ void tf(){
 		TimeGet(&tm);
 		Printf("TASK ");
 		while(t--) Printf(" ");
-		Printf("tid=%d\t sec=%d\n", TaskSelf(), tm.sec);
+		Printf("tid=%d\t sec=%d\r\n", TaskSelf(), tm.sec);
 	}
 }
 
@@ -24,32 +24,32 @@ void pt(){
 
 
 void test_task(){
-	Printf("TEST TASKS\n");
+	Printf("TEST TASKS\r\n");
 
-	TaskCreate(pt, 0, 0);
-	TaskCreate(pt, 0, 0);
-	TaskCreate(pt, 0, 0);
-	TaskCreate(pt, 0, 0);
+	TaskCreate(tf, 0, 0);
+	TaskCreate(tf, 0, 0);
+	TaskCreate(tf, 0, 0);
+	TaskCreate(tf, 0, 0);
 	/*
 	TaskSleep(2, 1000*20);
 
-	Printf("Main task sleep: 5 sec\n");
+	Printf("Main task sleep: 5 sec\r\n");
 	TaskSleep(TaskSelf(), 5000);
 
-	Printf("Task 2 sleep: 10 sec\n");
+	Printf("Task 2 sleep: 10 sec\r\n");
 	TaskSleep(2, 10000);
 
-	Printf("Kill task 3\n");
+	Printf("Kill task 3\r\n");
 	TaskExit(3);
 
-	Printf("Task 2 status: %d\n", TaskStatus(2));
-	Printf("Wake up task 2\n");
+	Printf("Task 2 status: %d\r\n", TaskStatus(2));
+	Printf("Wake up task 2\r\n");
 	TaskWakeup(2);
 
-	Printf("Task count: %d\n", TaskCount());
+	Printf("Task count: %d\r\n", TaskCount());
 	
-	Printf("Task 2 status: %d\n", TaskStatus(2));
+	Printf("Task 2 status: %d\r\n", TaskStatus(2));
 	*/
 	TaskSleep(TaskSelf(), 1000);
-	Printf("Finish main task\n");
+	Printf("Finish main task\r\n");
 }

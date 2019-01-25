@@ -6,7 +6,8 @@
 #define WHITE   "\x1B[37m"
 
 void stdio_init();
-int getc();
+int getc(char *c);
 int putc(char c);
+int gets(char *s, int n);
 int puts(char *s);
 int printf(char *format, ...);

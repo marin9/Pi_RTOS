@@ -5,7 +5,7 @@ void test_time(){
   time_t to, tn;
   to.sec=to.usec=0;
 
-  Printf("TEST TIME\n");
+  Printf("TEST TIME\r\n");
   while(1){
     int i;
     for(i=0;i<100;++i) asm volatile("");

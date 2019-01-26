@@ -14,7 +14,7 @@ int getc(char *c){
   int d;
   disable_interrupts();
   while(!uart_recv(&d)){
-    task_scheduler();
+    task_sleep(task_self(), 1);
   }
   enable_interrupts();
   *c=(char)d;
@@ -25,7 +25,7 @@ int putc(char c){
   int d=(int)c;
   disable_interrupts();
   while(!uart_send(d)){
-    task_scheduler();
+    task_sleep(task_self(), 1);
   }
   enable_interrupts();
   return 1;

@@ -119,6 +119,7 @@ void task_init(void (*main)()){
 
 
 int task_create(void *func, void *arg, int prio){
+	ASSERT(func, "Null pointer.");
 	// Allocate memory for task
 	context_t *cntx;
 	task_t *desc=mem_alloc(sizeof(task_t));

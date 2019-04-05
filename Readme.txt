@@ -1,48 +1,48 @@
 Real time operating system for ARM
 API:
 
-<stdio.h>
-+	Gets
-+	Printf
+stdio:
+	Gets
+	Printf
 
-<memory.h>
-+	Malloc
-+	Free
+memory:
+	Malloc
+	Free
 
-<time.h>
-+	TimerSet
-+	TimerGet
+time:
+	TimerSet
+	TimerGet
 
-<task.h>
-+	TaskCreate
-+	TaskExit
-+	TaskSelf
-+	TaskCount
-+	TaskSleep
-+	TaskWakeup
-+	TaskStatus
+task:
+	TaskCreate
+	TaskExit
+	TaskSelf
+	TaskCount
+	TaskSleep
+	TaskWakeup
+	TaskStatus
 
-<sem.h>
-+	SemCreate
-+	SemDelete
-+	SemWait
-+	SemTryWait
-+	SemPost
+sem:
+	SemCreate
+	SemDelete
+	SemWait
+	SemTryWait
+	SemPost
 
-<lib.h>
-+	memcpy
-+	memset
-+	strlen
-+	atoi
-+	itoa
+lib:
+	memcpy
+	memset
+	strlen
+	atoi
+	itoa
 
-<list.h>
-+	list_init
-+	list_count
-+	list_addFirst
-+	list_addLast
-+	list_addSort
-+	list_removeFirst
-+	list_remove
-+	list_getFirst
-+	list_getById
+list.h
+	list_init
+	list_count
+	list_addFirst
+	list_addLast
+	list_addSort
+	list_removeFirst
+	list_remove
+	list_getFirst
+	list_getById

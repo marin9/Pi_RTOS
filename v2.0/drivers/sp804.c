@@ -1,15 +1,15 @@
+//Timer
 #include "types.h"
 #include "device.h"
 
 #define TIMER0_BASE     0x101E2000
-
-#define TIMER0_LOAD     0x00
-#define TIMER0_VALUE    0x04
-#define TIMER0_CONTROL  0x08
-#define TIMER0_INTCLR   0x0C
-#define TIMER0_RIS      0x10
-#define TIMER0_MIS      0x14
-#define TIMER0_BGLOAD   0x18
+#define TIMER0_LOAD     ((volatile uint*)(TIMER0_BASE+0x00))
+#define TIMER0_VALUE    ((volatile uint*)(TIMER0_BASE+0x04))
+#define TIMER0_CONTROL  ((volatile uint*)(TIMER0_BASE+0x08))
+#define TIMER0_INTCLR   ((volatile uint*)(TIMER0_BASE+0x0C))
+#define TIMER0_RIS      ((volatile uint*)(TIMER0_BASE+0x10))
+#define TIMER0_MIS      ((volatile uint*)(TIMER0_BASE+0x14))
+#define TIMER0_BGLOAD   ((volatile uint*)(TIMER0_BASE+0x18))
 
 
 //Timer controll register
@@ -22,42 +22,41 @@
 #define TMR_1S   (1<<0)  //One shot
 
 
-static volatile uint *timer_base=(uint*)TIMER0_BASE;
 static uint VALUE;
 
 
 static void timer_init(){
-  *(timer_base+TIMER0_CONTROL)=0x00;
-  *(timer_base+TIMER0_CONTROL)=TMR_EN|TMR_MP|TMR_IEN|TMR_S32;
-  *(timer_base+TIMER0_LOAD)=VALUE=-1;
-  *(timer_base+TIMER0_INTCLR)=0;
+  *TIMER0_CONTROL=0x00;
+  *TIMER0_CONTROL=TMR_EN|TMR_MP|TMR_IEN|TMR_S32;
+  *TIMER0_INTCLR=0;
 }
 
 static void timer_clri(){
-  *(timer_base+TIMER0_INTCLR)=0;
+  	*TIMER0_INTCLR=0;
 }
 
 static uint timer_get(){
-  return VALUE-*(timer_base+TIMER0_VALUE);
+  return VALUE-*TIMER0_VALUE;
 }
 
 static void timer_set(uint us){
-	*(timer_base+TIMER0_LOAD)=VALUE=us;
-	*(timer_base+TIMER0_INTCLR)=0;
+	*TIMER0_INTCLR=0;
+	*TIMER0_LOAD=us;
+	VALUE=us;
 }
 
 static void timer_destroy(){
-	*(timer_base+TIMER0_CONTROL)=0x00;
-	*(timer_base+TIMER0_INTCLR)=0;
+	*TIMER0_CONTROL=0x00;
+	*TIMER0_INTCLR=0;
 }
 
 
 timer_t timer0=(timer_t){
 	.dev_id=0,
 	.irq_num=4,
-	.timer_init=timer_init,
-	.timer_clri=timer_clri,
-	.timer_get=timer_get,
-	.timer_set=timer_set,
-	.timer_destroy=timer_destroy
+	.init=timer_init,
+	.clri=timer_clri,
+	.get=timer_get,
+	.set=timer_set,
+	.destroy=timer_destroy
 };

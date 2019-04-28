@@ -1,4 +1,5 @@
-
+#include "arm.h"
+#include "device.h"
 
 
 void uart_print(char *s){
@@ -11,12 +12,21 @@ void uart_print(char *s){
 }
 
 
+extern timer_t timer0;
+extern irqcontroller_t irqcon;
+
 
 
 void startup(){
 
+	interrupts_init();
+	timer0.init();
+	timer0.set(500000);
+	irqcon.init();
+	irqcon.enable(4);
+	interrupts_enable();
 
-
+	while(1);
 }
 
 /*

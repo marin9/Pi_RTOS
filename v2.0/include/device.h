@@ -1,27 +1,36 @@
 #pragma once
+#include "types.h"
 
 typedef struct{
-	void (*irq_init)();
-	int (*irq_get)();
-	void (*irq_enable)(uint irq);
-	void (*irq_disable)(uint irq);
+	void (*init)();
+	int (*get)();
+	void (*enable)(uint irq);
+	void (*disable)(uint irq);
 } irqcontroller_t;
 
 
 typedef struct{
 	uint dev_id;
 	uint irq_num;
-	void (*timer_init)();
-	void (*timer_clri)();
-	uint (*timer_get)();
-	void (*timer_set)(uint us);
-	void (*timer_destroy)();
+
+	void (*init)();
+	void (*clri)();
+	uint (*get)();
+	void (*set)(uint us);
+	void (*destroy)();
 } timer_t;
 
 
 typedef struct{
+	uint dev_id;
+	uint irq_num;
+	uint flags;
+	void *param;
 
-
-
+	int (*init)(uint param);	
+	int (*stat)(uint param);
+	int (*send)(void *data, uint size);
+	int (*recv)(void *data, uint size);
+	void (*destroy)();
+	void (*clri)(); 
 } device_t;
-

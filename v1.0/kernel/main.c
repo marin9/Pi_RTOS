@@ -1,23 +1,24 @@
-#include "stdio.h"
-#include "cpu.h"
-#include "irq.h"
-#include "mem.h"
-#include "time.h"
-#include "task.h"
-#include "prog.h"
+#include "arm.h"
+#include "lib.h"
+#include "device.h"
+#include "param.h"
 
 
-void main_thread(){
-	test();
-}
+extern uint __end;
 
 
 void startup(){
-	stdio_init();
-	cpu_init();
+	uart_init();
+	timer_init();
+	timer_set(TICK_TIME);
+	mm_init(__end, HEAP_BLOCK, HEAP_NBLOCKS);
+
+	
 	irq_init();
-	mem_init();
-	time_init();
-	task_init(main_thread);
+	irq_enable(4);// umjesto 4 -> define const
+
+	interrupts_init();
+	interrupts_enable();
+
 }
 

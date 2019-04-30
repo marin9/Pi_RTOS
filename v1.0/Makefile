@@ -1,75 +1,82 @@
 CC=arm-none-eabi
-CFLAGS=-mcpu=arm926ej-s -ffreestanding -nostdlib -O2 -Wall -Wextra -c -I$(INCLUDE_DIR)
+CFLAGS=-mcpu=arm926ej-s -ffreestanding -nostdlib -O2 -Wall -Wextra -c
 LDFLAGS=-ffreestanding -nostdlib -lgcc
 
-ARCH_DIR=arch
-KERNEL_DIR=kernel
-PROGRAM_DIR=prog
-INCLUDE_DIR=include
-OBJ_DIR=obj
+ARCH=arch
+DRIVERS=drivers
+INCLUDE=include
+KERNEL=kernel
+PROG=prog
+LIB=lib
+OBJ=obj
 ELF=kernel.elf
 TARGET=kernel.img
-LINKER=$(ARCH_DIR)/linker.ld
+LINKER=$(ARCH)/linker.ld
 
-SRC_ARCHS	:= $(wildcard $(ARCH_DIR)/*.s)
-SRC_ARCHC   := $(wildcard $(ARCH_DIR)/*.c)
-SRC_KERNELC	:= $(wildcard $(KERNEL_DIR)/*.c)
-SRC_PROGC	:= $(wildcard $(PROGRAM_DIR)/*.c)
+SRC_ARCHS	:= $(wildcard $(ARCH)/*.s)
+SRC_ARCHC   := $(wildcard $(ARCH)/*.c)
+SRC_DRIVERS	:= $(wildcard $(DRIVERS)/*.c)
+SRC_INCLUDE	:= $(wildcard $(INCLUDE)/*.h)
+SRC_KERNEL	:= $(wildcard $(KERNEL)/*.c)
+SRC_PROG	:= $(wildcard $(PROG)/*.c)
+SRC_LIB		:= $(wildcard $(LIB)/*.c)
 
-OBJ_ARCHS	:= $(SRC_ARCHS:$(ARCH_DIR)/%.s=$(OBJ_DIR)/%.o)
-OBJ_ARCHC   := $(SRC_ARCHC:$(ARCH_DIR)/%.c=$(OBJ_DIR)/%.o)
-OBJ_KERNELC	:= $(SRC_KERNELC:$(KERNEL_DIR)/%.c=$(OBJ_DIR)/%.o)
-OBJ_PROGC	:= $(SRC_PROGC:$(PROGRAM_DIR)/%.c=$(OBJ_DIR)/%.o)
-
-INCLUDES := $(wildcard $(INCLUDE_DIR)/*.h)
-
+OBJ_ARCHS	:= $(SRC_ARCHS:$(ARCH)/%.s=$(OBJ)/%.o)
+OBJ_ARCHC   := $(SRC_ARCHC:$(ARCH)/%.c=$(OBJ)/%.o)
+OBJ_DRIVERS	:= $(SRC_DRIVERS:$(DRIVERS)/%.c=$(OBJ)/%.o)
+OBJ_KERNEL	:= $(SRC_KERNEL:$(KERNEL)/%.c=$(OBJ)/%.o)
+OBJ_PROG	:= $(SRC_PROG:$(PROG)/%.c=$(OBJ)/%.o)
+OBJ_LIB		:= $(SRC_LIB:$(LIB)/%.c=$(OBJ)/%.o)
 
 
 all: $(TARGET)
-	@echo $(ARCH)
+
 
 run: $(TARGET)
 	@echo "Starting qemu (Exit: Ctrl+A then X)"
-	@qemu-system-arm -M versatilepb -m 128M -nographic -kernel $(TARGET)
-
-gdb: $(TARGET)
-	@echo "Starting qemu (Exit: Ctrl+A then X)"
-	@qemu-system-arm -M versatilepb -m 128M -nographic -kernel $(TARGET) -s -S
+	@qemu-system-arm -M versatilepb -m 16M -nographic -kernel $(TARGET)
 
 clean:
-	@-rm -rf $(OBJ_DIR)
-	@-rm -f $(TARGET)
 	@echo "Clean"
+	@-rm -rf $(OBJ)
+	@-rm -f $(ELF)
+	@-rm -f $(TARGET)
 
 
-$(TARGET): $(OBJ_DIR) $(OBJ_DIR)/$(ELF) $(INCLUDE_DIR)
-	@echo "Create  $(TARGET)"
-	@$(CC)-objcopy $(OBJ_DIR)/$(ELF) -O binary $(TARGET)
+$(TARGET): $(OBJ) $(ELF) $(SRC_INCLUDE)
+	@echo " CC\t" $(TARGET)
+	@$(CC)-objcopy $(ELF) -O binary $(TARGET)
 
-$(OBJ_DIR)/$(ELF): $(LINKER) $(OBJ_ARCHC) $(OBJ_ARCHS) \
-				   $(OBJ_KERNELC) $(OBJ_PROGC)
-	@echo "Link files"
-	@$(CC)-gcc -T $(LINKER) $(OBJ_ARCHC) $(OBJ_ARCHS) \
-				  $(OBJ_KERNELC) $(OBJ_PROGC) \
-				  -o $@ $(LDFLAGS)
+$(ELF): $(LINKER) $(OBJ_ARCHS) $(OBJ_ARCHC) $(OBJ_DRIVERS) $(OBJ_KERNEL) $(OBJ_LIB)
+	@echo " LINK"
+	@$(CC)-gcc -T $(LINKER) $(OBJ_ARCHC) $(OBJ_ARCHS) $(OBJ_DRIVERS) $(OBJ_KERNEL) $(OBJ_LIB)\
+				-o $@ $(LDFLAGS)
 
 
-$(OBJ_ARCHC): $(OBJ_DIR)/%.o : $(ARCH_DIR)/%.c $(INCLUDES)
-	@echo Compile $<
+$(OBJ_ARCHS): $(OBJ)/%.o : $(ARCH)/%.s
+	@echo " CC\t" $<
 	@$(CC)-gcc $(CFLAGS) $< -o $@
 
-$(OBJ_ARCHS): $(OBJ_DIR)/%.o : $(ARCH_DIR)/%.s $(INCLUDES)
-	@echo Compile $<
-	@$(CC)-gcc $(CFLAGS) $< -o $@
+$(OBJ_ARCHC): $(OBJ)/%.o : $(ARCH)/%.c $(INCLUDE)
+	@echo " CC\t" $<
+	@$(CC)-gcc $(CFLAGS) -I$(INCLUDE) $< -o $@
 
+$(OBJ_DRIVERS): $(OBJ)/%.o : $(DRIVERS)/%.c $(INCLUDE)
+	@echo " CC\t" $<
+	@$(CC)-gcc $(CFLAGS) -I$(INCLUDE) $< -o $@
 
-$(OBJ_KERNELC): $(OBJ_DIR)/%.o : $(KERNEL_DIR)/%.c $(INCLUDES)
-	@echo Compile $<
-	@$(CC)-gcc $(CFLAGS) $< -o $@
+$(OBJ_KERNEL): $(OBJ)/%.o : $(KERNEL)/%.c $(INCLUDE)
+	@echo " CC\t" $<
+	@$(CC)-gcc $(CFLAGS) -I$(INCLUDE) $< -o $@
 
-$(OBJ_PROGC): $(OBJ_DIR)/%.o : $(PROGRAM_DIR)/%.c $(INCLUDES)
-	@echo Compile $<
-	@$(CC)-gcc $(CFLAGS) $< -o $@
+$(OBJ_PROG): $(OBJ)/%.o : $(PROG)/%.c $(INCLUDE)
+	@echo " CC\t" $<
+	@$(CC)-gcc $(CFLAGS) -I$(INCLUDE) $< -o $@
 
-$(OBJ_DIR):
+$(OBJ_LIB): $(OBJ)/%.o : $(LIB)/%.c $(INCLUDE)
+	@echo " CC\t" $<
+	@$(CC)-gcc $(CFLAGS) -I$(INCLUDE) $< -o $@
+
+$(OBJ):
+	@echo " MK\t" $(OBJ)
 	@mkdir $@

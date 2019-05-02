@@ -3,8 +3,8 @@
 
 
 void interrupt_handler(){
-
-	uart_print("\tINTERRUPT\r\n");
+	
+	//uart_print("\tINTERRUPT\r\n");
 	timer_ack();
 }
 

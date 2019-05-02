@@ -25,7 +25,7 @@ void* queue_remove(queue_t *q, node_t *n);
 
 
 // Memory Heap
-void mm_init(uint addr, uint bsize, uint n);
+void mm_init(void* addr, uint bsize, uint n);
 void* mm_alloc(uint size);
 void mm_free(void *p);
 

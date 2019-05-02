@@ -6,7 +6,7 @@ static uint n_blocks;
 static uint b_size;
 
 
-void mm_init(uint addr, uint bsize, uint n){
+void mm_init(void *addr, uint bsize, uint n){
 	uint i;
 	mm_begin=(char*)addr;
 	b_size=bsize;
@@ -20,7 +20,7 @@ void mm_init(uint addr, uint bsize, uint n){
 
 void* mm_alloc(uint size){
 	uint i;
-	if(size>b_size){
+	if(size>b_size || !size){
 		return 0;
 	}
 

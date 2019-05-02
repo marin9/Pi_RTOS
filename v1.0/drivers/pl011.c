@@ -60,6 +60,12 @@ void uart_putc(int c){
 	while(!uart_send(c));
 }
 
+uint uart_getc(){
+	int c;
+	while(!uart_recv(&c));
+	return c;
+}
+
 void uart_print(char *s){
 	while(*s){
 		uart_putc(*s);
@@ -80,4 +86,18 @@ void uart_printhex(uint x){
 		m=(m>>4);
 		s=(s-4);
 	}while(m);
+}
+
+uint uart_gets(char *b, uint n){
+	uint i;
+	for(i=0;i<n;++i){
+		b[i]=uart_getc();
+		if(b[i]=='\r'){
+			b[i]=0;
+			break;
+		}
+		uart_putc(b[i]);
+	}
+	uart_print("\r\n");
+	return i;
 }

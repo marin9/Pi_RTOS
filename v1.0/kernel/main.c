@@ -11,8 +11,7 @@ void startup(){
 	uart_init();
 	timer_init();
 	timer_set(TICK_TIME);
-	mm_init(__end, HEAP_BLOCK, HEAP_NBLOCKS);
-
+	mm_init((void*)&__end, HEAP_BLOCK, HEAP_NBLOCKS);
 	
 	irq_init();
 	irq_enable(4);// umjesto 4 -> define const
@@ -20,5 +19,25 @@ void startup(){
 	interrupts_init();
 	interrupts_enable();
 
+
+	/*
+	TimerSet
+	TimerGet
+
+	TaskCreate
+	TaskExit
+	TaskSelf
+	TaskCount
+	TaskSleep
+	TaskWakeup
+	TaskStatus
+
+	SemCreate
+	SemDelete
+	SemWait
+	SemTryWait
+	SemPost
+	*/
+	
 }
 

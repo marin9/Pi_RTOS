@@ -19,5 +19,7 @@ void uart_init();
 int uart_send(int c);
 int uart_recv(int *c);
 void uart_putc(int c);
+uint uart_getc();
 void uart_print(char *s);
 void uart_printhex(uint x);
+uint uart_gets(char *b, uint n);

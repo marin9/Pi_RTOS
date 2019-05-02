@@ -2,9 +2,6 @@
 #include "types.h"
 
 // Interrupts
-void interrupt_init();
-void interrupt_enable();
-void interrupt_disable();
 void interrupt_handler();
 
 // Memory
@@ -14,3 +11,6 @@ void memory_free(void *p);
 
 // Time
 void time_init();
+void time_tick();
+void time_set(time_t *newtime);
+void time_get(time_t *current);

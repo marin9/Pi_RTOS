@@ -23,6 +23,11 @@
 #define IRQ_MBX			19	/* Graphics processor on development chip */
 
 
+// Processor
+void cpu_lidt();
+void cpu_sti();
+void cpu_cli();
+
 // Interrupt controller
 void irq_init();
 int irq_get();

@@ -54,8 +54,8 @@ _interrupt:
   
 
 
-.global lidt;
-lidt:
+.global cpu_lidt;
+cpu_lidt:
     push    {r0, r1, r2, r3, r4, r5, r6, r7, r8, r9}
   	ldr     r0, =irq_vectors
   	mov     r1, #0
@@ -67,16 +67,16 @@ lidt:
   	bx     lr
 
 
-.global sti;
-sti:
+.global cpu_sti;
+cpu_sti:
 	mrs r0, cpsr
 	bic r0, r0, #0x80
 	msr cpsr_c, r0
 	bx lr
 
 
-.global cli
-cli:
+.global cpu_cli
+cpu_cli:
 	mrs r0, cpsr
 	orr r0, r0, #0x80
 	msr cpsr_c, r0

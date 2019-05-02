@@ -47,9 +47,9 @@ $(TARGET): $(OBJ) $(ELF) $(SRC_INCLUDE)
 	@echo " CC\t" $(TARGET)
 	@$(CC)-objcopy $(ELF) -O binary $(TARGET)
 
-$(ELF): $(LINKER) $(OBJ_ARCHS) $(OBJ_ARCHC) $(OBJ_DRIVERS) $(OBJ_KERNEL) $(OBJ_LIB)
+$(ELF): $(LINKER) $(OBJ_ARCHS) $(OBJ_ARCHC) $(OBJ_DRIVERS) $(OBJ_KERNEL) $(OBJ_LIB) $(OBJ_PROG)
 	@echo " LINK"
-	@$(CC)-gcc -T $(LINKER) $(OBJ_ARCHC) $(OBJ_ARCHS) $(OBJ_DRIVERS) $(OBJ_KERNEL) $(OBJ_LIB)\
+	@$(CC)-gcc -T $(LINKER) $(OBJ_ARCHC) $(OBJ_ARCHS) $(OBJ_DRIVERS) $(OBJ_KERNEL) $(OBJ_LIB) $(OBJ_PROG)\
 				-o $@ $(LDFLAGS)
 
 

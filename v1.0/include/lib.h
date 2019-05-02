@@ -23,12 +23,6 @@ void* queue_pop(queue_t *q);
 void queue_push(queue_t *q, node_t *n, void *o);
 void* queue_remove(queue_t *q, node_t *n);
 
-
-// Memory Heap
-void mm_init(void* addr, uint bsize, uint n);
-void* mm_alloc(uint size);
-void mm_free(void *p);
-
 // Strings
 void *memset(void *s, int c, uint n);
 void *memcpy(void *dest, void *src, uint n);

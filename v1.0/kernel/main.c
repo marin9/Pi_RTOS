@@ -1,6 +1,7 @@
-#include "arm.h"
-#include "lib.h"
 #include "device.h"
+#include "kernel.h"
+#include "arm.h"
+#include "prog.h"
 #include "param.h"
 
 
@@ -8,36 +9,15 @@ extern uint __end;
 
 
 void startup(){
+	lidt();
 	uart_init();
-	timer_init();
-	timer_set(TICK_TIME);
-	mm_init((void*)&__end, HEAP_BLOCK, HEAP_NBLOCKS);
-	
 	irq_init();
-	irq_enable(4);// umjesto 4 -> define const
+	timer_init();
 
-	interrupts_init();
-	interrupts_enable();
+	memory_init((void*)&__end, HEAP_BLOCK, HEAP_NBLOCKS);
+	interrupt_init();
+	interrupt_enable();
 
-
-	/*
-	TimerSet
-	TimerGet
-
-	TaskCreate
-	TaskExit
-	TaskSelf
-	TaskCount
-	TaskSleep
-	TaskWakeup
-	TaskStatus
-
-	SemCreate
-	SemDelete
-	SemWait
-	SemTryWait
-	SemPost
-	*/
-	
+	mainprog();
 }
 

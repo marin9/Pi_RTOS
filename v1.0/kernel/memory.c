@@ -1,12 +1,11 @@
 #include "types.h"
 
-
 static char *mm_begin;
 static uint n_blocks;
 static uint b_size;
 
 
-void mm_init(void *addr, uint bsize, uint n){
+void memory_init(void *addr, uint bsize, uint n){
 	uint i;
 	mm_begin=(char*)addr;
 	b_size=bsize;
@@ -18,12 +17,11 @@ void mm_init(void *addr, uint bsize, uint n){
 }
 
 
-void* mm_alloc(uint size){
+void* memory_alloc(uint size){
 	uint i;
 	if(size>b_size || !size){
 		return 0;
 	}
-
 	for(i=0;i<n_blocks;++i){
 		if(!(*(mm_begin+b_size*i))){
 			*(mm_begin+b_size*i)=1;
@@ -33,7 +31,7 @@ void* mm_alloc(uint size){
 	return 0;
 }
 
-void mm_free(void *p){
+void memory_free(void *p){
 	char *block=(char*)p;
 	*(block-1)=0;
 }

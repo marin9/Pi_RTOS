@@ -1,20 +1,7 @@
 #pragma once
 #include "types.h"
 
-
 // Queue
-typedef struct node_t{
-	void *object;
-	struct node_t* next;
-	struct node_t* prev;
-} node_t;
-
-typedef struct queue_t{
-	int count;
-	node_t *first;
-	node_t *last;
-} queue_t;
-
 void queue_init(queue_t *q);
 int queue_count(queue_t *q);
 void* queue_peek(queue_t *q);

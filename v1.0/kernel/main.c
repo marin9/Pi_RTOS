@@ -5,7 +5,7 @@
 
 
 extern uint __end;
-
+// add pipe or msgq
 
 void interrupt_handler(){
 	uint irq=irq_get();
@@ -30,6 +30,8 @@ void startup(){
 
 	cpu_sti();
 	//run_main_thread
+
+
 	mainprog();
 }
 

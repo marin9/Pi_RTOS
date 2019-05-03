@@ -1,15 +1,15 @@
 #include "types.h"
+#include "lib.h"
 
+
+static int next_id;
+static int sched_en=0;
+static queue_t all_tasks;
+static queue_t sleep_tasks;
+static queue_t ready_tasks;
+static task_t *active_task;
 
 /*
-
-static int next_tid;
-static int sched_run=0;
-static list_t all_list;
-static list_t sleep_list;
-list_t ready_list;
-task_t *active_task;
-
 
 
 static void task_finish(){
@@ -27,27 +27,6 @@ static void idle(){
 	while(1) cpu_suspend();
 }
 
-
-
-
-int comp_time(void *o1, void *o2){
-	task_t *t1=(task_t*)o1;
-	task_t *t2=(task_t*)o2;
- 	return time_cmp(&(t1->sleep), &(t2->sleep));
-}
-
-int comp_tid(void *o1, void *o2){
-	int tid=*((int*)o1);
-	task_t *t=(task_t*)o2;
-	return t->tid==tid;
-}
-
-int comp_prio(void *o1, void *o2){
-	task_t *t1=(task_t*)o1;
-	task_t *t2=(task_t*)o2;
- 	if(t1->prio >= t2->prio) return 0;
-	else return 1;
-}
 
 
 

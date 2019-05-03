@@ -5,8 +5,8 @@
 #define TASK_SLEEPING   1
 #define TASK_BLOCKED	2
 
-#define SEM_BIN		0
-#define SEM_COUNT	1
+#define SEM_BIN			0
+#define SEM_COUNT		1
 
 
 // Interrupts
@@ -39,5 +39,5 @@ void sem_init();
 int	sem_create(int val, int type);
 int	sem_delete(int sid);
 int	sem_wait(int sid);
-int	sem_trywait(int sid);
 int	sem_post(int sid);
+int	sem_trywait(int sid);

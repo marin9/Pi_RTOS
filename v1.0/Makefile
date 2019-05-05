@@ -50,23 +50,23 @@ $(ELF): $(LINKER) $(OBJ_ARCHS) $(OBJ_ARCHC) $(OBJ_CORE) $(OBJ_LIB) $(OBJ_PROG)
 				-o $@ $(LDFLAGS)
 
 
-$(OBJ_ARCHS): $(OBJ)/%.o : $(ARCH)/%.s
+$(OBJ_ARCHS): $(OBJ)/%.o : $(ARCH)/%.s $(SRC_INC)
 	@echo " CC\t" $<
 	@$(CC)-gcc $(CFLAGS) $< -o $@
 
-$(OBJ_ARCHC): $(OBJ)/%.o : $(ARCH)/%.c $(INC)
+$(OBJ_ARCHC): $(OBJ)/%.o : $(ARCH)/%.c $(SRC_INC)
 	@echo " CC\t" $<
 	@$(CC)-gcc $(CFLAGS) -I$(INC) $< -o $@
 
-$(OBJ_CORE): $(OBJ)/%.o : $(CORE)/%.c $(INC)
+$(OBJ_CORE): $(OBJ)/%.o : $(CORE)/%.c $(SRC_INC)
 	@echo " CC\t" $<
 	@$(CC)-gcc $(CFLAGS) -I$(INC) $< -o $@
 
-$(OBJ_PROG): $(OBJ)/%.o : $(PROG)/%.c $(INC)
+$(OBJ_PROG): $(OBJ)/%.o : $(PROG)/%.c $(SRC_INC)
 	@echo " CC\t" $<
 	@$(CC)-gcc $(CFLAGS) -I$(INC) $< -o $@
 
-$(OBJ_LIB): $(OBJ)/%.o : $(LIB)/%.c $(INC)
+$(OBJ_LIB): $(OBJ)/%.o : $(LIB)/%.c $(SRC_INC)
 	@echo " CC\t" $<
 	@$(CC)-gcc $(CFLAGS) -I$(INC) $< -o $@
 

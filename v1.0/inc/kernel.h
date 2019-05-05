@@ -24,14 +24,15 @@ uint time_get();
 
 // Task
 void task_sched();
+void start_sched();
 int task_init(void (*main)());
 int task_create(void *func, void *arg);
 //int task_sleep(int tid, int ms);
 //int task_wakeup(int tid);
-//int task_exit(int tid);
+int task_exit(uint id);
+int task_count();
+int task_self();
 void task_yield();
-//int task_count();
-//int task_self();
 
 // Semaphore
 void sem_init();

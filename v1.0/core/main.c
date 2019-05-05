@@ -25,11 +25,8 @@ void startup(){
 
 	memory_init((void*)&__end, HEAP_BLOCK, HEAP_NBLOCKS);
 	time_init();
-	sem_init();
 	task_init(main);
-
-	//task_start();
-	//TODO add pipe or msgq
-	uart_print("ERR: task_init.\r\n");
+	sem_init();
+	start_sched();
 }
 

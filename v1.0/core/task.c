@@ -12,6 +12,7 @@ static queue_t all_tasks;
 static queue_t ready_tasks;
 static task_t *active_task;
 
+//TODO add pipe or msgq
 
 
 static void idle(){
@@ -40,15 +41,17 @@ int task_init(void (*main)()){
 	active_task=0;
 	queue_init(&all_tasks);
 	queue_init(&ready_tasks);
-	//TODO list_init(&sleep_list);
+//TODOlist_init(&sleep_list);
 
 	// Create idle task and main task
 	if(task_create(idle, 0)<0) return -1;
 	if(task_create(main, 0)<0) return -2;
+	return 0;
+}
 
+void start_sched(){
 	sched_en=1;
 	task_yield();
-	return -3;
 }
 
 
@@ -121,7 +124,6 @@ void task_yield(){
 	}
 	task_t *new=queue_pop(&ready_tasks);
 	active_task=new;
-
   	context_switch(old, new);
 }
 
@@ -181,34 +183,34 @@ int task_wakeup(int tid){
 	task->status=TASK_RUNNING;
 	return 0;
 }
+*/
 
-
-int task_exit(int tid){
-	if(tid==active_task->tid){
-		task_finish();
+int task_exit(uint id){
+	if(id==active_task->id){
+		task_reap();
 		return 0;
 	}else{
 		// Find task
-		task_t *task;
-		node_t *node=list_get(&all_list, &tid, comp_tid);
-		if(!node) return -1;
-		else task=node->object;
-
+		task_t *task=queue_peek(&all_tasks);
+		while(task && ((task->id)!=id)){
+			task=queue_next(&(task->nd));
+		}
+		if(!task){
+			return -1;
+		}
     	// Remove selected task
-    	list_remove(task->queue, &tid, comp_tid);
-    	list_remove(&all_list, &tid, comp_tid);
-		mem_free(task->stack);
-		mem_free(task);
+    	queue_remove(&ready_tasks, &(task->nd));
+    	queue_remove(&all_tasks, &(task->ndall));
+		memory_free(task->stack);
+		memory_free(task);
 		return 0;
   }
 }
 
 int task_count(){
-	return list_count(&all_list);
+	return queue_count(&all_tasks);
 }
 
 int task_self(){
-	return active_task->tid;
+	return active_task->id;
 }
-
-*/

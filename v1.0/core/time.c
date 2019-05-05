@@ -1,5 +1,6 @@
 #include "types.h"
 #include "device.h"
+#include "kernel.h"
 #include "param.h"
 
 static uint system_time_us;
@@ -13,7 +14,7 @@ void time_init(){
 
 void time_tick(){
 	++system_time_us;
-	timer_ack();
+	task_sched();
 }
 
 uint time_get(){

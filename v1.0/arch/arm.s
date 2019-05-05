@@ -18,31 +18,27 @@ _interrupt_vector_h:              	.word _interrupt
 _fast_interrupt_vector_h:         	.word _start
 
 
-
-irq_stack:
-  .word 0
-irq_stack_:
-  .word irq_stack+4
-
-
 _interrupt:
   // Load sp from user mod
-  ldr sp, irq_stack_
-  stmfd sp, {sp}^
-  ldr sp, [sp, #-4]
-  // save context
+  ldr sp, =__start
+  stm sp, {sp}^
+  ldr sp, [sp]
+
+  // Save context
   stmfd sp, {r0-r14}^
   sub sp, sp, #(15*4)
   push  {lr}
   mrs r0, cpsr
   mrs r1, spsr
   push  {r0-r1}
-  // save sp while change mode
+
+  // Change mode
   mov r2, sp
-  msr cpsr, #0xdf
+  msr cpsr, #0xDF
   mov sp, r2
   bl  interrupt_handler
-  // restore context
+
+  // Restore context
   pop {r0-r1}
   mov r2, sp
   msr cpsr, r0
@@ -51,8 +47,9 @@ _interrupt:
   pop {lr}
   ldmfd sp, {r0-r14}^
   subs  pc, lr, #4
-  
 
+
+  
 
 .global cpu_lidt;
 cpu_lidt:
@@ -81,3 +78,21 @@ cpu_cli:
 	orr r0, r0, #0x80
 	msr cpsr_c, r0
 	bx lr
+
+
+.global context_switch
+context_switch:
+  cmp r0, #0
+  beq skip
+  //Save old thread state
+  push {lr}
+  push {sp}
+  mrs r12, cpsr
+  push {r0-r12}
+  str sp, [r0]
+skip:
+  //Restore new thread state
+  ldr sp, [r1]
+  pop {r0-r12}
+  msr cpsr_c, r12
+  pop {lr, pc}

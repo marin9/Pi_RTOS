@@ -16,8 +16,11 @@ void memory_init(void *addr, uint bsize, uint n){
 	}
 }
 
-
 void* memory_alloc(uint size){
+	mm_begin+=4096;
+	return mm_begin;
+
+	/*
 	uint i;
 	if(size>b_size || !size){
 		return 0;
@@ -28,10 +31,10 @@ void* memory_alloc(uint size){
 			return mm_begin+b_size*i+1;
 		}
 	}
-	return 0;
+	return 0;*/
 }
 
 void memory_free(void *p){
-	char *block=(char*)p;
-	*(block-1)=0;
+	//char *block=(char*)p;
+	//*(block-1)=0;
 }

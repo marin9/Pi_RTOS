@@ -25,6 +25,30 @@ int Task_create(void *func, void *arg){
 	return s;
 }
 
+int Task_wait(queue_t *q){
+	int s;
+	cpu_cli();
+	s=task_wait(q);
+	cpu_sti();
+	return s;
+}
+
+int Task_wakeup(queue_t *q){
+	int s;
+	cpu_cli();
+	s=task_wakeup(q);
+	cpu_sti();
+	return s;
+}
+
+int Task_wakeup_all(queue_t *q){
+	int s;
+	cpu_cli();
+	s=task_wakeup_all(q);
+	cpu_sti();
+	return s;
+}
+
 int Task_exit(uint id){
 	int s;
 	cpu_cli();
@@ -46,3 +70,4 @@ void Task_yield(){
 	task_yield();
 	cpu_sti();
 }
+

@@ -8,11 +8,8 @@
 static int next_id;
 static int sched_en=0;
 static queue_t all_tasks;
-//static queue_t sleep_tasks;
 static queue_t ready_tasks;
 static task_t *active_task;
-
-//TODO add pipe or msgq
 
 
 static void idle(){
@@ -41,7 +38,6 @@ int task_init(void (*main)()){
 	active_task=0;
 	queue_init(&all_tasks);
 	queue_init(&ready_tasks);
-//TODOlist_init(&sleep_list);
 
 	// Create idle task and main task
 	if(task_create(idle, 0)<0) return -1;
@@ -89,30 +85,9 @@ int task_create(void *func, void *arg){
 
 
 void task_sched(){
-	if(!sched_en) return;
-
-
-	//time_t current_time;
-	//time_get(&current_time);
-
-	// Wake up all task from sleep with elapsed time
-	/*while(1){
-		// Get first task from list
- 		node_t *node=list_getFirst(&sleep_list);
-    	if(!node) break;
-    	task_t *task=node->object;
-
-    	// If first is not finised with sleep, there is not one
-    	if(time_cmp(&current_time, &(task->sleep))<0){
-      		break;
-      	// Pop first from list and put into ready list
-    	}else{
-      		list_removeFirst(&sleep_list);
-      		list_addSort(&ready_list, &(task->node), task, comp_prio);
-      		task->queue=&ready_list;
-      		task->status=TASK_RUNNING;
-    	}
-	}*/
+	if(!sched_en){
+		return;
+	}
   	task_yield();
 }
 
@@ -126,64 +101,6 @@ void task_yield(){
 	active_task=new;
   	context_switch(old, new);
 }
-
-
-
-
-/*
-int task_sleep(int tid, int ms){
-	// Set time value descriptor
-	time_t delay;
-  	delay.sec=ms/1000;
-  	delay.usec=ms%1000;
-  	delay.usec=delay.usec*1000;
-
-  	time_t current;
-  	time_get(&current);
-
-  	// Current task sleep
-	if(tid==active_task->tid){
-		// Store current task to sleep list
-    	time_add(&current, &delay, &(active_task->sleep));
-    	list_addSort(&sleep_list, &(active_task->node), active_task, comp_time);
-    	active_task->queue=&sleep_list;
-    	active_task->status=TASK_SLEEPING;
-
-  		task_run_next();
-    	return 0;
-    // Other task to sleep
-  	}else{
-  		// Find selected task
-    	node_t *node=list_remove(&ready_list, &tid, comp_tid);
-    	if(!node) node=list_remove(&sleep_list, &tid, comp_tid);
-    	if(node){
-      		task_t *task=node->object;
-      		// Set time for sleep
-      		time_add(&current, &delay, &(task->sleep));
-      		// Put task into sleep list
-      		list_addSort(&sleep_list, &(task->node), task, comp_time);
-      		task->queue=&sleep_list;
-      		task->status=TASK_SLEEPING;
-      		return 0;
-    	}else{
-      		return -1;
-    	}
-  	}
-}
-
-int task_wakeup(int tid){
-	// Find selected task
-	node_t *node=list_remove(&sleep_list, &tid, comp_tid);
-	if(!node) return -1;
-	task_t *task=node->object;
-
-	// Insert to run list
-	list_addSort(&ready_list, &(task->node), task, comp_prio);
-	task->queue=&ready_list;
-	task->status=TASK_RUNNING;
-	return 0;
-}
-*/
 
 int task_exit(uint id){
 	if(id==active_task->id){
@@ -213,4 +130,37 @@ int task_count(){
 
 int task_self(){
 	return active_task->id;
+}
+
+int task_wait(queue_t *q){
+	task_t *current=active_task;
+	current->status=TASK_WAITING;
+	queue_push(q, &(current->nd), current);
+	
+	task_t *new=queue_pop(&ready_tasks);
+	active_task=new;
+  	context_switch(current, new);
+  	return 0;
+}
+
+int task_wakeup(queue_t *q){
+	task_t *task=queue_pop(q);
+	if(!task){
+		return -1;
+	}
+	task->status=TASK_RUNNING;
+	queue_push(&ready_tasks, &(task->nd), task);
+	task_yield();
+	return 0;
+}
+
+int task_wakeup_all(queue_t *q){
+	task_t *task=queue_pop(q);
+	while(task){
+		task->status=TASK_RUNNING;
+		queue_push(&ready_tasks, &(task->nd), task);
+		task=queue_pop(q);
+	}
+	task_yield();
+	return 0;
 }

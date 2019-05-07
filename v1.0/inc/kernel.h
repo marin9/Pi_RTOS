@@ -1,9 +1,8 @@
 #pragma once
 #include "types.h"
 
-#define TASK_RUNNING    0
-#define TASK_SLEEPING   1
-#define TASK_BLOCKED	2
+#define TASK_RUNNING	0
+#define TASK_WAITING	1
 
 #define SEM_BIN			0
 #define SEM_COUNT		1
@@ -27,9 +26,10 @@ void task_sched();
 void start_sched();
 int task_init(void (*main)());
 int task_create(void *func, void *arg);
-//int task_sleep(int tid, int ms);
-//int task_wakeup(int tid);
 int task_exit(uint id);
+int task_wait(queue_t *q);
+int task_wakeup(queue_t *q);
+int task_wakeup_all(queue_t *q);
 int task_count();
 int task_self();
 void task_yield();
@@ -41,3 +41,5 @@ void sem_init();
 //int	sem_wait(int sid);
 //int	sem_post(int sid);
 //int	sem_trywait(int sid);
+
+//TODO add pipe or msgq

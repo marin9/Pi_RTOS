@@ -1,23 +1,28 @@
 #include "api.h"
+#include "lib.h"
 #include "device.h"
 
-
+/*
 static int N[]={1, 2, 3, 4};
+
 
 static void func(void *p){
 	int i;
 	int n=*((int*)p);
 	while(1){	
-		uart_printhex(n);
+		uart_printhex(Task_self());
 		uart_print("\r\n");
 		for(i=0;i<50000000;++i){
 			asm volatile("");
 		}
+
+		if(n==1 || n==2){
+			Task_yield();
+		}
 	}
 }
 
-
-void main(){
+void test_task(){
 	int t1, t2, t3, t4;
 
 	t1=Task_create(func, &N[0]);
@@ -31,12 +36,58 @@ void main(){
 
 	while(1){
 		int i;
-		uart_print("M\r\n");
+		uart_print("M  ");
+		uart_printhex(Task_count());
+		uart_print("\r\n");
 		for(i=0;i<100000000;++i){
 			asm volatile("");
 		}
-		Task_exit(t2);
-		Task_exit(t4);
+		if(Task_exit(t2)<0) uart_print("ERR: 1\r\n");
+		if(Task_exit(50)<0) uart_print("ERR: 2\r\n");
+		Task_yield();
 		break;
 	}
+}
+*/
+
+
+
+queue_t w;
+
+
+void func2(){
+	int i;
+
+	uart_printhex(Task_self());
+	uart_print("\r\n");
+	Task_wait(&w);
+
+	while(1){	
+		uart_printhex(Task_self());
+		uart_print("\r\n");
+		for(i=0;i<90000000;++i){
+			asm volatile("");
+		}
+	}
+}
+
+
+void test_wait(){
+	int i;
+	queue_init(&w);
+
+	Task_create(func2, 0);
+	Task_create(func2, 0);
+
+	for(i=0;i<900000000;++i){
+		asm volatile("");
+	}
+	Task_wakeup_all(&w);
+	//Task_wakeup(&w);
+}
+
+
+void main(){
+	//test_task();
+	test_wait();
 }

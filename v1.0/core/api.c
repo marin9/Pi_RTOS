@@ -17,6 +17,16 @@ void Mfree(void *p){
 	cpu_sti();
 }
 
+uint Time(){
+	return time_get();
+}
+
+void Sleep(uint ms){
+	cpu_cli();
+	time_wait(ms);
+	cpu_sti();
+}
+
 int Task_create(void *func, void *arg){
 	int s;
 	cpu_cli();

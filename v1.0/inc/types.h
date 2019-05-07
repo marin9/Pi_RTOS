@@ -43,7 +43,6 @@ typedef struct{
   void *stack;
   uint id;
   uint status;
-  uint sleep;
   node_t nd;
   node_t ndall;
 } task_t;

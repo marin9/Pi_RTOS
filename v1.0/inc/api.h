@@ -4,6 +4,9 @@
 void* Malloc(uint size);
 void Mfree(void *p);
 
+uint Time();
+void Sleep(uint ms);
+
 int Task_create(void *func, void *arg);
 int Task_wait(queue_t *q);
 int Task_wakeup(queue_t *q);

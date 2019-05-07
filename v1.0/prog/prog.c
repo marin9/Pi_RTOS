@@ -51,9 +51,8 @@ void test_task(){
 */
 
 
-
+/*
 queue_t w;
-
 
 void func2(){
 	int i;
@@ -71,7 +70,6 @@ void func2(){
 	}
 }
 
-
 void test_wait(){
 	int i;
 	queue_init(&w);
@@ -84,10 +82,35 @@ void test_wait(){
 	}
 	Task_wakeup_all(&w);
 	//Task_wakeup(&w);
+}*/
+
+
+static int t1=1000;
+static int t2=500;
+
+void func3(void *p){
+	int t=*((int*)p);
+	while(1){
+		if(t==t1) uart_print("  ");
+		uart_printhex(Task_self());
+		uart_print("\r\n");
+		Sleep(t);
+	}
 }
+
+void test_time(){
+	Task_create(func3, &t1);
+	Task_create(func3, &t2);
+	while(1){
+		uart_print("-------------\r\n");
+		Sleep(200);
+	}
+}
+
 
 
 void main(){
 	//test_task();
-	test_wait();
+	//test_wait();
+	test_time();
 }

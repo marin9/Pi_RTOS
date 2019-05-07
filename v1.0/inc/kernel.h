@@ -20,6 +20,7 @@ void memory_free(void *p);
 void time_init();
 void time_tick();
 uint time_get();
+void time_wait(uint ms);
 
 // Task
 void task_sched();

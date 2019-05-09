@@ -1,6 +1,7 @@
 #pragma once
 #include "types.h"
 
+// Processor
 #define CPSR_IRQ_EN		0x80
 
 #define CPSR_MODE_FIQ	0x11
@@ -10,6 +11,7 @@
 #define CPSR_MODE_UND	0x1b
 #define CPSR_MODE_SYS	0x1f
 
+// Interrupt controller
 #define IRQ_WATCHDOG 	0	/* Watchdog timer */
 #define IRQ_SWI			1	/* Software interrupt (not one generated with SVC/SWI) */
 #define IRQ_COM_RX		2	/* Debug communications receive interrupt */
@@ -36,7 +38,7 @@
 void cpu_lidt();
 void cpu_sti();
 void cpu_cli();
-void context_switch(task_t *old, task_t *new);
+void context_switch(void *old, void *new);
 
 // Interrupt controller
 void irq_init();

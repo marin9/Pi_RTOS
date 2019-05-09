@@ -1,12 +1,12 @@
 #include "api.h"
 #include "lib.h"
-#include "device.h"
+#include "dev.h"
 
 
 //TODO add pipe or msgq
 
 
-/*
+
 static int N[]={1, 2, 3, 4};
 
 
@@ -52,7 +52,7 @@ void test_task(){
 		break;
 	}
 }
-*/
+
 
 
 /*
@@ -118,7 +118,7 @@ void test_time(){
 
 
 
-
+/*
 // Test count
 static int p=1;
 static int buffer[5];
@@ -169,7 +169,7 @@ void test_lock(){
   Task_create(proizv, &p);
   Task_create(trosi, 0);
   uart_print("Main exit\r\n");
-}
+}*/
 
 
 // Test bin
@@ -211,8 +211,8 @@ static void test_lock(){
 */
 
 void main(){
-	//test_task();
+	test_task();
 	//test_wait();
 	//test_time();
-	test_lock();
+	//test_lock();
 }

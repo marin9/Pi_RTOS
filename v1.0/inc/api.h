@@ -1,6 +1,6 @@
 #pragma once
 #include "types.h"
-#include "kernel.h"
+#include "core.h"
 
 void* Malloc(uint size);
 void Mfree(void *p);

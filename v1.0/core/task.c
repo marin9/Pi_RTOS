@@ -1,7 +1,7 @@
-#include "device.h"
-#include "kernel.h"
 #include "param.h"
 #include "types.h"
+#include "core.h"
+#include "dev.h"
 #include "lib.h"
 
 

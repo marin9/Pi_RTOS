@@ -1,6 +1,6 @@
 #include "types.h"
-#include "kernel.h"
-#include "device.h"
+#include "core.h"
+#include "dev.h"
 
 
 void* Malloc(uint size){

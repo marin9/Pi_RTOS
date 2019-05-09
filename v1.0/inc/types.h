@@ -49,9 +49,7 @@ typedef struct{
 
 // Semaphore
 typedef struct{
-  uint id;
   uint type;
   uint value;
   queue_t wait_tasks;
-  node_t nd;
 } sem_t;

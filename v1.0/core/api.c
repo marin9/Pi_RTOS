@@ -81,3 +81,30 @@ void Task_yield(){
 	cpu_sti();
 }
 
+void Sem_init(sem_t *s, int val, int type){
+	sem_init(s, val, type);
+}
+
+int	Sem_wait(sem_t *s){
+	int v;
+	cpu_cli();
+	v=sem_wait(s);
+	cpu_sti();
+	return v;
+}
+
+int	Sem_post(sem_t *s){
+	int v;
+	cpu_cli();
+	v=sem_post(s);
+	cpu_sti();
+	return v;
+}
+
+int	Sem_trywait(sem_t *s){
+	int v;
+	cpu_cli();
+	v=sem_trywait(s);
+	cpu_sti();
+	return v;
+}

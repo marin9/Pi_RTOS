@@ -26,7 +26,6 @@ void startup(){
 	memory_init((void*)&__end, HEAP_BLOCK, HEAP_NBLOCKS);
 	time_init();
 	task_init(main);
-	sem_init();
 	start_sched();
 }
 

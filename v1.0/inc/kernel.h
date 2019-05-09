@@ -23,8 +23,9 @@ uint time_get();
 void time_wait(uint ms);
 
 // Task
-void task_sched();
 void start_sched();
+void task_sched();
+void task_yield();
 int task_init(void (*main)());
 int task_create(void *func, void *arg);
 int task_exit(uint id);
@@ -33,14 +34,9 @@ int task_wakeup(queue_t *q);
 int task_wakeup_all(queue_t *q);
 int task_count();
 int task_self();
-void task_yield();
 
 // Semaphore
-void sem_init();
-//int	sem_create(int val, int type);
-//int	sem_delete(int sid);
-//int	sem_wait(int sid);
-//int	sem_post(int sid);
-//int	sem_trywait(int sid);
-
-//TODO add pipe or msgq
+void sem_init(sem_t *s, int val, int type);
+int	sem_wait(sem_t *s);
+int	sem_post(sem_t *s);
+int	sem_trywait(sem_t *s);

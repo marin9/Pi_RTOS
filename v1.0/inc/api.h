@@ -1,5 +1,6 @@
 #pragma once
 #include "types.h"
+#include "kernel.h"
 
 void* Malloc(uint size);
 void Mfree(void *p);
@@ -15,3 +16,8 @@ int Task_exit(uint id);
 int Task_count();
 int Task_self();
 void Task_yield();
+
+void Sem_init(sem_t *s, int val, int type);
+int	Sem_wait(sem_t *s);
+int	Sem_post(sem_t *s);
+int	Sem_trywait(sem_t *s);

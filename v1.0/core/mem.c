@@ -7,6 +7,7 @@ static uint b_size;
 
 void memory_init(void *addr, uint bsize, uint n){
 	uint i;
+
 	mm_begin=(char*)addr;
 	b_size=bsize;
 	n_blocks=n;

@@ -7,6 +7,10 @@
 #define SEM_BIN			0
 #define SEM_COUNT		1
 
+#define ERR_ARGS	1
+#define ERR_NOMEM	2
+#define ERR_NOOBJ	3
+
 
 // Interrupts
 void interrupt_handler();
@@ -36,7 +40,7 @@ int task_count();
 int task_self();
 
 // Semaphore
-void sem_init(sem_t *s, int val, int type);
+int sem_init(sem_t *s, int val, int type);
 int	sem_wait(sem_t *s);
 int	sem_post(sem_t *s);
 int	sem_trywait(sem_t *s);

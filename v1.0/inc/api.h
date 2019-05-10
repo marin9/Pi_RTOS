@@ -17,7 +17,7 @@ int Task_count();
 int Task_self();
 void Task_yield();
 
-void Sem_init(sem_t *s, int val, int type);
+int Sem_init(sem_t *s, int val, int type);
 int	Sem_wait(sem_t *s);
 int	Sem_post(sem_t *s);
 int	Sem_trywait(sem_t *s);

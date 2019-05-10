@@ -34,14 +34,22 @@ static void task_reap(){
 
 
 int task_init(void (*main)()){
+	int ret;
 	next_id=0;
 	active_task=0;
 	queue_init(&all_tasks);
 	queue_init(&ready_tasks);
 
+	if(!main){
+		return -ERR_ARGS;
+	}
+
 	// Create idle task and main task
-	if(task_create(idle, 0)<0) return -1;
-	if(task_create(main, 0)<0) return -2;
+	ret=task_create(idle, 0);
+	if(ret<0) return ret;
+	ret=task_create(main, 0);
+	if(ret<0) return ret;
+
 	return 0;
 }
 
@@ -54,15 +62,19 @@ void start_sched(){
 int task_create(void *func, void *arg){
 	task_t *task;
 	context_t *context;
-	if(!func) return -1;
+	if(!func){
+		return -ERR_ARGS;
+	}
 
 	// Allocate memory for task
 	task=memory_alloc(sizeof(task_t));
-	if(!task) return -2;
+	if(!task){
+		return -ERR_NOMEM;
+	}
 	task->stack=memory_alloc(TASK_STACK);
 	if(!(task->stack)){
 		memory_free(task);
-		return -2;
+		return -ERR_NOMEM;
 	}
 
 	// Initialize task descriptor
@@ -85,10 +97,9 @@ int task_create(void *func, void *arg){
 
 
 void task_sched(){
-	if(!sched_en){
-		return;
+	if(sched_en){
+		task_yield();
 	}
-  	task_yield();
 }
 
 
@@ -113,7 +124,7 @@ int task_exit(uint id){
 			task=queue_next(&(task->nd));
 		}
 		if(!task){
-			return -1;
+			return -ERR_NOOBJ;
 		}
     	// Remove selected task
     	queue_remove(&ready_tasks, &(task->nd));
@@ -133,6 +144,9 @@ int task_self(){
 }
 
 int task_wait(queue_t *q){
+	if(!q){
+		return -ERR_ARGS;
+	}
 	task_t *current=active_task;
 	current->status=TASK_WAITING;
 	queue_push(q, &(current->nd), current);
@@ -144,9 +158,12 @@ int task_wait(queue_t *q){
 }
 
 int task_wakeup(queue_t *q){
+	if(!q){
+		return -ERR_ARGS;
+	}
 	task_t *task=queue_pop(q);
 	if(!task){
-		return -1;
+		return ERR_NOOBJ;
 	}
 	task->status=TASK_RUNNING;
 	queue_push(&ready_tasks, &(task->nd), task);
@@ -155,7 +172,13 @@ int task_wakeup(queue_t *q){
 }
 
 int task_wakeup_all(queue_t *q){
+	if(!q){
+		return -ERR_ARGS;
+	}
 	task_t *task=queue_pop(q);
+	if(!task){
+		return ERR_NOOBJ;
+	}
 	while(task){
 		task->status=TASK_RUNNING;
 		queue_push(&ready_tasks, &(task->nd), task);

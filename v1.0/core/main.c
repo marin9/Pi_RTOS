@@ -22,7 +22,7 @@ void startup(){
 	irq_init();
 	timer_init();
 
-	memory_init((void*)&__end, HEAP_BLOCK, HEAP_NBLOCKS);
+	memory_init((void*)&__end);
 	time_init();
 	task_init(main);
 	start_sched();

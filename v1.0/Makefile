@@ -31,7 +31,7 @@ all: $(TARGET)
 
 run: $(TARGET)
 	@echo "Starting qemu (Exit: Ctrl+A then X)"
-	@qemu-system-arm -M versatilepb -m 128M -nographic -kernel $(TARGET)
+	@qemu-system-arm -M versatilepb -m 1M -nographic -kernel $(TARGET)
 
 clean:
 	@echo "Clean"

@@ -1,41 +1,39 @@
 #include "types.h"
+#include "param.h"
 
-static char *mm_begin;
-static uint n_blocks;
-static uint b_size;
+static block_t *heap;
 
 
-void memory_init(void *addr, uint bsize, uint n){
-	uint i;
+void memory_init(void *addr){
+	int i;
+	heap=(block_t*)addr;
 
-	mm_begin=(char*)addr;
-	b_size=bsize;
-	n_blocks=n;
-
-	for(i=0;i<n_blocks;++i){
-		*(mm_begin+b_size*i)=0;
+	for(i=0;i<HEAP_NBLOCKS;++i){
+		heap[i].used=0;
 	}
 }
 
-void* memory_alloc(uint size){
-	mm_begin+=4096;
-	return mm_begin;
 
-	/*
-	uint i;
-	if(size>b_size || !size){
+void* memory_alloc(uint size){
+	int i;
+
+	if(!size || size>(HEAP_BLOCK-1)){
 		return 0;
 	}
-	for(i=0;i<n_blocks;++i){
-		if(!(*(mm_begin+b_size*i))){
-			*(mm_begin+b_size*i)=1;
-			return mm_begin+b_size*i+1;
+
+	for(i=0;i<HEAP_NBLOCKS;++i){
+		if(heap[i].used==0){
+			heap[i].used=1;
+			return heap[i].block;
 		}
 	}
-	return 0;*/
+	return 0;
 }
 
 void memory_free(void *p){
-	//char *block=(char*)p;
-	//*(block-1)=0;
+	block_t *block;
+	if(p){
+		block=(block_t*)(((char*)p)-sizeof(char));
+		block->used=0;
+	}
 }

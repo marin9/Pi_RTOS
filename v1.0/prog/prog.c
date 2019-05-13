@@ -210,8 +210,39 @@ static void test_lock(){
 }
 */
 
+
+// test memory
+static int n=0;
+static sem_t sem;
+
+void fn(){
+	//Sem_wait(&sem);
+	++n;
+	//Sem_post(&sem);
+	uart_printhex(n);
+	uart_print("\r\n");
+}
+
+void test_memory(){
+	int i, s;
+	Sem_init(&sem, 1, SEM_BIN);
+	while(1){
+		for(i=0;i<50;++i){
+			s=Task_create(fn, 0);
+			if(s<0){
+				uart_print("ERROR: task_create fail: ");
+				uart_printhex(s);
+				uart_print("\r\n");
+				return;
+			}
+		}
+		Sleep(200);
+	}
+}
+
 void main(){
-	test_task();
+	test_memory();
+	//test_task();
 	//test_wait();
 	//test_time();
 	//test_lock();

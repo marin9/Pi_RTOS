@@ -1,4 +1,5 @@
 #pragma once
+#include "param.h"
 
 // Basic
 typedef unsigned int uint;
@@ -17,6 +18,19 @@ typedef struct queue_t{
 	node_t *first;
 	node_t *last;
 } queue_t;
+
+// Semaphore
+typedef struct{
+  uint type;
+  uint value;
+  queue_t wait_tasks;
+} sem_t;
+
+// Memory
+typedef struct{
+  char used;
+  char block[HEAP_BLOCK-1];
+} block_t;
 
 // Processor
 typedef struct{
@@ -46,10 +60,3 @@ typedef struct{
   node_t nd;
   node_t ndall;
 } task_t;
-
-// Semaphore
-typedef struct{
-  uint type;
-  uint value;
-  queue_t wait_tasks;
-} sem_t;

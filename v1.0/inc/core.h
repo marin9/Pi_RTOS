@@ -16,7 +16,7 @@
 void interrupt_handler();
 
 // Memory
-void memory_init(void *addr, uint bsize, uint n);
+void memory_init(void *addr);
 void* memory_alloc(uint size);
 void memory_free(void *p);
 

@@ -38,6 +38,7 @@ int task_wakeup(queue_t *q);
 int task_wakeup_all(queue_t *q);
 int task_count();
 int task_self();
+int task_join(uint id);
 
 // Semaphore
 int sem_init(sem_t *s, int val, int type);

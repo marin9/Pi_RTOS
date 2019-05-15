@@ -81,6 +81,14 @@ void Task_yield(){
 	cpu_sti();
 }
 
+int Task_join(uint id){
+	int s;
+	cpu_cli();
+	s=task_join(id);
+	cpu_sti();
+	return s;
+}
+
 int Sem_init(sem_t *s, int val, int type){
 	return sem_init(s, val, type);
 }

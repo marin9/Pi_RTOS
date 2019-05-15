@@ -16,6 +16,7 @@ int Task_exit(uint id);
 int Task_count();
 int Task_self();
 void Task_yield();
+int Task_join(uint id);
 
 int Sem_init(sem_t *s, int val, int type);
 int	Sem_wait(sem_t *s);

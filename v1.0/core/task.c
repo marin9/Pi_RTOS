@@ -187,3 +187,27 @@ int task_wakeup_all(queue_t *q){
 	task_yield();
 	return 0;
 }
+
+int task_exist(uint id){
+	// Find task
+	task_t *task=queue_peek(&all_tasks);
+	while(task && ((task->id)!=id)){
+		task=queue_next(&(task->nd));
+	}
+	if(!task){
+		return 0;
+	}else{
+		return 1;
+	}
+}
+
+int task_join(uint id){
+	if(!task_exist(id)){
+		return -ERR_NOOBJ;
+	}
+	while(task_exist(id)){
+		task_yield();
+	}
+	return 0;
+}
+

@@ -5,6 +5,7 @@ void test_task();
 void test_memory();
 void test_lock1();
 void test_lock2();
+void test_join();
 
 
 void main(){
@@ -17,6 +18,7 @@ void main(){
 	uart_print("\tb : test tasks\r\n");
 	uart_print("\tc : test bin sem\r\n");
 	uart_print("\td : test count sem\r\n");
+	uart_print("\te : test join\r\n");
 	uart_print(">");
 
 	uart_gets(buff, 1);
@@ -33,6 +35,9 @@ void main(){
 			break;
 		case 'd':
 			test_lock2();
+			break;
+		case 'e':
+			test_join();
 			break;
 		default:
 			uart_print("WARNING: Illegal command.\r\n");

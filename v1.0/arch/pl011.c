@@ -68,8 +68,7 @@ uint uart_getc(){
 
 void uart_print(char *s){
 	while(*s){
-		uart_putc(*s);
-		++s;
+		uart_putc(*s++);
 	}
 }
 

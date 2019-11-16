@@ -1,30 +1,23 @@
-#include "param.h"
-#include "core.h"
-#include "dev.h"
+#include "cpu.h"
+#include "rpi.h"
+#include "task.h"
+#include "types.h"
+#include "device.h"
+#include "interrupt.h"
 
-extern uint __end;
-extern void main();
+
+void test1();
+void test2();
+void test3();
 
 
-void interrupt_handler(){
-	uint irq=irq_get();
-	switch(irq){
-		case IRQ_TIMER01:
-			time_tick();
-			timer_ack();
-			break;
-	}
-}
-
-void startup(){
-	cpu_lidt();
+void main(){
 	uart_init();
-	irq_init();
 	timer_init();
+	pic_init();
+	interrupt_init();
+	task_init();
 
-	memory_init((void*)&__end);
-	time_init();
-	task_init(main);
-	start_sched();
+	task_start(test3, 0);
+	task_sched_start();
 }
-

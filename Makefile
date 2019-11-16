@@ -1,75 +1,73 @@
 CC=arm-none-eabi
-CFLAGS=-mcpu=arm926ej-s -ffreestanding -nostdlib -O2 -Wall -Wextra -c
-LDFLAGS=-ffreestanding -nostdlib -lgcc
+MCPU=-mcpu=arm1176jzf-s
+CFLAGS=-nostdlib -ffreestanding -O2 -Wall -Wextra
+LDFLAGS=-nostdlib -lgcc
+HDFLAGS=-I$(CORE) -I$(CPU) -I$(DEV)
 
-ARCH=arch
+CPU=cpu
+DEV=dev
 CORE=core
 PROG=prog
-LIB=lib
-INC=inc
 OBJ=obj
-ELF=os.elf
-TARGET=os.img
-LINKER=$(ARCH)/memory.ld
 
-SRC_ARCHS	:= $(wildcard $(ARCH)/*.s)
-SRC_ARCHC   := $(wildcard $(ARCH)/*.c)
-SRC_INC 	:= $(wildcard $(INC)/*.h)
+LINKER=$(DEV)/memory.ld
+ELF=$(OBJ)/kernel.elf
+TARGET=kernel.img
+
+SRC_ASM		:= $(wildcard $(CPU)/*.S)
+SRC_CPU		:= $(wildcard $(CPU)/*.c)
+SRC_DEV		:= $(wildcard $(DEV)/*.c)
 SRC_CORE	:= $(wildcard $(CORE)/*.c)
 SRC_PROG	:= $(wildcard $(PROG)/*.c)
-SRC_LIB		:= $(wildcard $(LIB)/*.c)
+SRC_INC 	:= $(wildcard $(CPU)/*.h)
+SRC_INC		+= $(wildcard $(DEV)/*.h)
+SRC_INC		+= $(wildcard $(CORE)/*.h)
 
-OBJ_ARCHS	:= $(SRC_ARCHS:$(ARCH)/%.s=$(OBJ)/%.o)
-OBJ_ARCHC   := $(SRC_ARCHC:$(ARCH)/%.c=$(OBJ)/%.o)
+OBJ_ASM		:= $(SRC_ASM:$(CPU)/%.S=$(OBJ)/%.o)
+OBJ_CPU		+= $(SRC_CPU:$(CPU)/%.c=$(OBJ)/%.o)
+OBJ_DEV		:= $(SRC_DEV:$(DEV)/%.c=$(OBJ)/%.o)
 OBJ_CORE	:= $(SRC_CORE:$(CORE)/%.c=$(OBJ)/%.o)
 OBJ_PROG	:= $(SRC_PROG:$(PROG)/%.c=$(OBJ)/%.o)
-OBJ_LIB		:= $(SRC_LIB:$(LIB)/%.c=$(OBJ)/%.o)
 
 
-all: $(TARGET)
+
+$(TARGET): $(OBJ) $(ELF) $(SRC_INC)
+	@echo " Create\t\t" $(TARGET)
+	@$(CC)-objcopy $(ELF) -O binary $(TARGET)
+
+$(ELF): $(LINKER) $(OBJ_ASM) $(OBJ_CPU) $(OBJ_DEV) \
+		$(OBJ_CORE) $(OBJ_PROG)
+	@echo " Linking\t" $(ELF)
+	@$(CC)-gcc -T $(LINKER) $(OBJ_ASM) $(OBJ_CPU) \
+			$(OBJ_DEV) $(OBJ_CORE) $(OBJ_PROG) \
+			 -o $@ $(LDFLAGS)
 
 
-run: $(TARGET)
-	@echo "Starting qemu (Exit: Ctrl+A then X)"
-	@qemu-system-arm -M versatilepb -m 1M -nographic -kernel $(TARGET)
+$(OBJ_ASM): $(OBJ)/%.o : $(CPU)/%.S $(SRC_INC)
+	@echo " Compile\t" $<
+	@$(CC)-gcc $(MCPU) $(CFLAGS) -c $(HDFLAGS) $< -o $@
+
+$(OBJ_CPU): $(OBJ)/%.o : $(CPU)/%.c $(SRC_INC)
+	@echo " Compile\t" $<
+	@$(CC)-gcc $(MCPU) $(CFLAGS) -c $(HDFLAGS) $< -o $@
+
+$(OBJ_DEV): $(OBJ)/%.o : $(DEV)/%.c $(SRC_INC)
+	@echo " Compile\t" $<
+	@$(CC)-gcc $(MCPU) $(CFLAGS) -c $(HDFLAGS) $< -o $@
+
+$(OBJ_CORE): $(OBJ)/%.o : $(CORE)/%.c $(SRC_INC)
+	@echo " Compile\t" $<
+	@$(CC)-gcc $(MCPU) $(CFLAGS) -c $(HDFLAGS) $< -o $@
+
+$(OBJ_PROG): $(OBJ)/%.o : $(PROG)/%.c $(SRC_INC)
+	@echo " Compile\t" $<
+	@$(CC)-gcc $(MCPU) $(CFLAGS) -c $(HDFLAGS) $< -o $@
+
+$(OBJ):
+	@mkdir $@
 
 clean:
 	@echo "Clean"
 	@-rm -rf $(OBJ)
-	@-rm -f $(ELF)
 	@-rm -f $(TARGET)
-
-
-$(TARGET): $(OBJ) $(ELF) $(SRC_INC)
-	@echo " CC\t" $(TARGET)
-	@$(CC)-objcopy $(ELF) -O binary $(TARGET)
-
-$(ELF): $(LINKER) $(OBJ_ARCHS) $(OBJ_ARCHC) $(OBJ_CORE) $(OBJ_LIB) $(OBJ_PROG)
-	@echo " LINK"
-	@$(CC)-gcc -T $(LINKER) $(OBJ_ARCHC) $(OBJ_ARCHS) $(OBJ_CORE) $(OBJ_LIB) $(OBJ_PROG)\
-				-o $@ $(LDFLAGS)
-
-
-$(OBJ_ARCHS): $(OBJ)/%.o : $(ARCH)/%.s $(SRC_INC)
-	@echo " CC\t" $<
-	@$(CC)-gcc $(CFLAGS) $< -o $@
-
-$(OBJ_ARCHC): $(OBJ)/%.o : $(ARCH)/%.c $(SRC_INC)
-	@echo " CC\t" $<
-	@$(CC)-gcc $(CFLAGS) -I$(INC) $< -o $@
-
-$(OBJ_CORE): $(OBJ)/%.o : $(CORE)/%.c $(SRC_INC)
-	@echo " CC\t" $<
-	@$(CC)-gcc $(CFLAGS) -I$(INC) $< -o $@
-
-$(OBJ_PROG): $(OBJ)/%.o : $(PROG)/%.c $(SRC_INC)
-	@echo " CC\t" $<
-	@$(CC)-gcc $(CFLAGS) -I$(INC) $< -o $@
-
-$(OBJ_LIB): $(OBJ)/%.o : $(LIB)/%.c $(SRC_INC)
-	@echo " CC\t" $<
-	@$(CC)-gcc $(CFLAGS) -I$(INC) $< -o $@
-
-$(OBJ):
-	@echo " MK\t" $(OBJ)
-	@mkdir $@
+	

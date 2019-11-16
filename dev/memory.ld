@@ -1,15 +1,20 @@
 ENTRY(_start)
+
 SECTIONS{
 	. = 0x10000;
+	
 	__start = .;
 
 	.text : {
-		obj/start.o(.text*);
+		obj/arm7.o(.text*);
 		*(.text*);
 	}
 
-	.data : {
+	.rodata : {
 		*(.rodata*);
+	}
+
+	.data : {		
 		*(.data*);
 	}
 
@@ -17,6 +22,6 @@ SECTIONS{
 		*(.bss*);
 	}
 
-	. = ALIGN(8);
+	.=ALIGN(8);
 	__end = .;
 }

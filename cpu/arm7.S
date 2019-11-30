@@ -71,7 +71,7 @@ _interrupt:
 	mov r2, sp
 	msr cpsr, #0xDF
 	mov sp, r2
-	bl interrupt_handler
+	bl irq_handler
 
 	//Restore context
 	pop {r0-r1}
@@ -110,8 +110,8 @@ skip:
 // enable interrupts
 // ############################
 
-.global interrupts_enable
-interrupts_enable:
+.global irq_enable
+irq_enable:
 	mrs r0, cpsr
 	bic r0, r0, #0x80
 	msr cpsr_c, r0
@@ -122,8 +122,8 @@ interrupts_enable:
 // disable interrupts
 // ############################
 
-.global interrupts_disable
-interrupts_disable:
+.global irq_disable
+irq_disable:
 	mrs r0, cpsr
 	orr r0, r0, #0x80
 	msr cpsr_c, r0

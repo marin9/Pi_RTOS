@@ -4,7 +4,6 @@
 //	TEST:
 //	task_create
 //	task_sleep
-//  task_yield
 
 static void task1(){
 	while(1){
@@ -29,7 +28,6 @@ static void task3(){
 
 
 void test1(){
-	timer_wait(5000000);
 	task_start(task1, 0);
 	task_start(task2, 0);
 	task_start(task3, 0);

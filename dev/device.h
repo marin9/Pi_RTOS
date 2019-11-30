@@ -1,14 +1,6 @@
 #pragma once
 #include "types.h"
 
-#define SYSTMR1_IRQ	1
-#define SYSTMR3_IRQ 3
-#define GPIO_IRQ_0  49
-#define GPIO_IRQ_1  50
-#define GPIO_IRQ_2  51
-#define GPIO_IRQ_3  52
-#define IRQ_COUNT	72
-
 #define GP_LOW 			0
 #define GP_HIGH 		1
 #define GP_IN			0
@@ -27,6 +19,14 @@
 #define GP_FALLING_EDGE	2
 #define GP_HIGH_EDGE	3
 #define GP_LOW_EDGE		4
+
+#define SYSTMR1_IRQ	1
+#define SYSTMR3_IRQ 3
+#define GPIO_IRQ_0  49
+#define GPIO_IRQ_1  50
+#define GPIO_IRQ_2  51
+#define GPIO_IRQ_3  52
+#define IRQ_COUNT	72
 
 
 void timer_init();
@@ -47,5 +47,6 @@ void gpio_enint(uint pin, void (*h)(), int edge);
 
 void uart_init();
 void uart_print(char *s);
+void uart_getc(char *c);
 int uart_read(int unit, void* buffer, int size);
 int uart_write(int unit, void* buffer, int size);

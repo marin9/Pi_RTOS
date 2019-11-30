@@ -31,7 +31,7 @@ typedef struct{
 	uint pc;
 } context_t;
 
-void interrupts_enable();
-void interrupts_disable();
+void irq_enable();
+void irq_disable();
 void context_switch(void *c1, void *c2);
-void context_create(void *ctx, void *fn, void *reap);
+void context_create(void *ctx, void *func, void *reap);

@@ -2,7 +2,8 @@
 #include "device.h"
 
 //	TEST:
-//	semaphore
+//	sem_take
+//	sem_give
 
 static void task1(){
 	int i;
@@ -45,7 +46,6 @@ static void task3(){
 
 
 void test3(){
-	timer_wait(5000000);
 	sem_init(1, 1);
 	task_start(task1, 0);
 	task_start(task2, 0);

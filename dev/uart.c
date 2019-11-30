@@ -95,6 +95,14 @@ static int uart_recv(){
 	return *UART0_DR;
 }
 
+void uart_getc(char *c){
+	int data;
+
+	do{
+		data=uart_recv();
+	}while(data==-1);
+	*c=(char)data;
+}
 
 int uart_read(int unit, void* buffer, int size){
 	int i, c;

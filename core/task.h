@@ -5,7 +5,7 @@
 #define PRIO_COUNT		4
 #define SEM_COUNT		4
 #define TICK_TIME		1000
-#define STACK_SIZE		(2*1024)
+#define STACK_SIZE		1024
 
 
 void task_init();
@@ -17,4 +17,4 @@ void task_exit();
 void sem_init(uint id, uint v);
 void sem_take(uint id);
 void sem_give(uint id);
-int sem_try(uint id);
+uint sem_try(uint id);

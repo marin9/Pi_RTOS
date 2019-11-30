@@ -40,7 +40,6 @@ static void task4(){
 }
 
 void test2(){
-	timer_wait(5000000);
 	task_start(task1, 0);
 	task_start(task2, 0);
 	task_start(task3, 1);

@@ -1,8 +1,8 @@
 #include "cpu.h"
+#include "irq.h"
 #include "task.h"
 #include "types.h"
 #include "device.h"
-#include "interrupt.h"
 
 
 #define TASK_DORMANT	0
@@ -31,10 +31,11 @@ typedef struct{
 } sem_t;
 
 
-static uint sched_running;
+static uint sched_run;
 static uint active_task;
 static task_queue_t sleep_queue;
 static task_queue_t queue_ready[PRIO_COUNT];
+
 static task_t task[TASK_COUNT];
 static sem_t sem[SEM_COUNT];
 static char stack[TASK_COUNT][STACK_SIZE] \
@@ -45,6 +46,10 @@ static char stack[TASK_COUNT][STACK_SIZE] \
 static void task_queue_init(task_queue_t *q){
 	q->first=0;
 	q->last=0;
+}
+
+static task_t* task_peek(task_queue_t *q){
+	return q->first;
 }
 
 static void task_enqueue(task_queue_t *q, task_t *t){
@@ -81,10 +86,6 @@ static task_t* task_dequeue(task_queue_t *q){
 	tmp->next=0;
 	tmp->prev=0;
 	return tmp;
-}
-
-static task_t* task_peek(task_queue_t *q){
-	return q->first;
 }
 
 static void task_enqueue_sleep(task_queue_t *q, task_t *t, uint ticks){
@@ -168,7 +169,7 @@ static void task_yield(){
 	task_t *old;
 	task_t *new;
 
-	if(!sched_running)
+	if(!sched_run)
 		return;
 
 	old=&task[active_task];
@@ -177,9 +178,8 @@ static void task_yield(){
 
 	for(i=0;i<PRIO_COUNT;++i){
 		new=task_dequeue(&queue_ready[i]);
-		if(new){
+		if(new)
 			break;
-		}
 	}
 
 	active_task=new->id;
@@ -197,9 +197,8 @@ static void task_block(task_queue_t *q, uint stat){
 
 static int task_release(task_queue_t *q){
 	task_t *t=task_dequeue(q);
-	if(!t){
+	if(!t)
 		return -1;
-	}
 
 	task_enqueue(&queue_ready[t->prio], t);
 	t->status=TASK_READY;
@@ -239,11 +238,11 @@ void task_init(){
 	}
 
 	active_task=0;
-	sched_running=0;
+	sched_run=0;
 	task_queue_init(&sleep_queue);
 	task_start(task_idle, PRIO_COUNT-1);
 
-	interrupt_register(SYSTMR1_IRQ, task_tick);
+	irq_register(SYSTMR1_IRQ, task_tick);
 	pic_enable(SYSTMR1_IRQ);
 	timer_set(TICK_TIME);
 }
@@ -254,23 +253,22 @@ void task_sched_start(){
 
 	for(i=0;i<PRIO_COUNT;++i){
 		new=task_dequeue(&queue_ready[i]);
-		if(new){
+		if(new)
 			break;
-		}
 	}
 
-	sched_running=1;
+	sched_run=1;
 	active_task=new->id;
 	context_switch(0, new);
 }
 
 // ##############################
-// Task functions
+// User task functions
 // ##############################
 
 void task_start(func fn, uint pr){
 	int i;
-	interrupts_disable();
+	irq_disable();
 
 	for(i=0;i<TASK_COUNT;++i){
 		if(!task[i].status){
@@ -291,21 +289,21 @@ void task_start(func fn, uint pr){
 	context_t *ctx=(context_t*)task[i].sp;
 	context_create(ctx, fn, task_exit);
 	task_enqueue(&queue_ready[pr], &task[i]);
-	interrupts_enable();
+	irq_enable();
 }
 
 void task_sleep(uint ticks){
 	task_t *t;
-	interrupts_disable();
+	irq_disable();
 	t=&task[active_task];
 	t->status=TASK_SLEEP;
 	task_enqueue_sleep(&sleep_queue, t, ticks);
 	task_yield();
-	interrupts_enable();
+	irq_enable();
 }
 
 void task_exit(){
-	interrupts_disable();
+	irq_disable();
 	task[active_task].status=TASK_DORMANT;
 	task_yield();
 }
@@ -315,35 +313,28 @@ void task_exit(){
 // ##############################
 
 void sem_init(uint id, uint v){
-	if(id>=SEM_COUNT)
-		return;
-
-	interrupts_disable();
+	irq_disable();
 
 	sem[id].value=v;
 	task_queue_init(&sem[id].wait_q);
-	interrupts_enable();
+
+	irq_enable();
 }
 
 void sem_take(uint id){
-	if(id>=SEM_COUNT)
-		return;
-
-	interrupts_disable();
+	irq_disable();
 
 	if(sem[id].value > 0){
 		sem[id].value -= 1;
 	}else{
 		task_block(&sem[id].wait_q, TASK_BLOCKED);
 	}
-	interrupts_enable();
+
+	irq_enable();
 }
 
 void sem_give(uint id){
-	if(id>=SEM_COUNT)
-		return;
-
-	interrupts_disable();
+	irq_disable();
 
 	if(!task_peek(&sem[id].wait_q)){
 		sem[id].value += 1;
@@ -351,15 +342,13 @@ void sem_give(uint id){
 		task_release(&sem[id].wait_q);
 		task_yield();
 	}
-	interrupts_enable();
+
+	irq_enable();
 }
 
-int sem_try(uint id){
+uint sem_try(uint id){
 	int ret;
-	if(id>=SEM_COUNT)
-		return -1;
-
-	interrupts_disable();
+	irq_disable();
 
 	if(sem[id].value > 0){
 		sem[id].value -= 1;
@@ -367,6 +356,7 @@ int sem_try(uint id){
 	}else{
 		ret=1;
 	}
-	interrupts_enable();
+
+	irq_enable();
 	return ret;
 }

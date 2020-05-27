@@ -1,12 +1,9 @@
-ENTRY(_start)
-
-SECTIONS{
+ENTRY(start)
+SECTIONS {
 	. = 0x10000;
-	
-	__start = .;
 
 	.text : {
-		obj/arm7.o(.text*);
+		start.o(.text*);
 		*(.text*);
 	}
 
@@ -14,14 +11,11 @@ SECTIONS{
 		*(.rodata*);
 	}
 
-	.data : {		
+	.data : {
 		*(.data*);
 	}
 
 	.bss : {
 		*(.bss*);
 	}
-
-	.=ALIGN(8);
-	__end = .;
 }

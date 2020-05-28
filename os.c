@@ -5,11 +5,11 @@
 #define TASK_READY		1
 #define TASK_BLOCKED	2
 
-#define SYS_ENTRY()		int i_flag = cpu_interrupts(1)
+#define SYS_ENTRY()		volatile uint i_flag = cpu_interrupts(1)
 #define SYS_EXIT()		cpu_interrupts(i_flag)
 
-static uint sched_run;
-static uint sys_time;
+static volatile uint sched_run;
+static volatile uint sys_time;
 static task_t *active_task;
 static queue_t ready_queue[PRIO_COUNT];
 static queue_t sleep_queue;
@@ -92,7 +92,7 @@ static void task_yield() {
 		queue_push(&ready_queue[prev->prio], prev);
 
 	active_task = 0;
-	for (i = 0; (i < PRIO_COUNT) && !active_task; ++i)
+	for (i = 0; i < PRIO_COUNT && !active_task; ++i)
 		active_task = queue_pop(&ready_queue[i]);
 
 	if (active_task == &task[0])
@@ -204,7 +204,8 @@ int task_create(func fn, void *arg, uint prio) {
   	ctx->r0 = (uint)arg;
 
 	queue_push(&ready_queue[prio], &task[i]);
-	if (sched_run)
+
+	if (sched_run == 1)
 		task_yield();
 
 	SYS_EXIT();

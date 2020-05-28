@@ -10,12 +10,6 @@ void task0() {
     }
 }
 
-void task1() {
-    while (1) {
-        uart_print("T  1\r\n");
-        task_sleep(400);
-    }
-}
 
 void setup() {
     pic_init();
@@ -25,7 +19,6 @@ void setup() {
     os_init();
 
     task_create(task0, 0, 0);
-    task_create(task1, 0, 0);
 
     os_start();
 }

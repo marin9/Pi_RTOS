@@ -20,22 +20,28 @@
 #define CS1		7
 
 
-void spi_init() {
+void spi_init(uint clk_div) {
 	gpio_mode(SCLK, GPIO_FN0);
 	gpio_mode(MOSI, GPIO_FN0);
 	gpio_mode(MISO, GPIO_FN0);
 	gpio_mode(CS0, GPIO_FN0);
 	gpio_mode(CS1, GPIO_FN0);
 	*SPI_CS = 0;
+	*SPI_CLK = clk_div;
+}
+
+void spi_begin() {
+	*SPI_CS = CS_CLRFIFO | CS_TA;
+}
+
+void spi_end() {
+	*SPI_CS = 0;
 }
 
 void spi_readwrite(char *buff, uint len) {
 	uint i;
-	*SPI_CS = CS_CLRFIFO | CS_TA;
-
 	for (i = 0; i < len; ++i) {
 		while (!(*SPI_CS & CS_TXD));
-
 		*SPI_FIFO = buff[i];
 
 		while (!(*SPI_CS & CS_DONE));
@@ -43,5 +49,4 @@ void spi_readwrite(char *buff, uint len) {
 		while (*SPI_CS & CS_RXD)
 			buff[i] = *SPI_FIFO;
 	}
-	*SPI_CS = 0;
 }

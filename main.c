@@ -2,23 +2,24 @@
 #include "lib.h"
 #include "os.h"
 
+static char buff[128];
 
-void task0() {
-    while (1) {
-        uart_print("T 0\r\n");
-        task_sleep(200);
-    }
+
+static void delay(uint us) {
+    us += timer_get();
+    while (timer_get() < us);
 }
 
 
 void setup() {
+    // user code
     pic_init();
     uart_init();
     timer_init();
+    spi_init(32);
 
-    os_init();
+    delay(4000000);
 
-    task_create(task0, 0, 0);
-
-    os_start();
+    flash_read(0, buff, 128);
+    uart_print(buff);
 }

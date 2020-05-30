@@ -73,6 +73,8 @@ void uart_hex(uint n);
 void uart_flush();
 
 void spi_init();
+void spi_begin();
+void spi_end();
 void spi_readwrite(char *buff, uint len);
 
 void i2c_init();
@@ -87,3 +89,7 @@ void gpio_write(uint pin, int val);
 uint gpio_read(uint pin);
 void gpio_enint(uint pin, void (*h)(), int edge);
 void gpio_irq_handler();
+
+
+void flash_read(uint addr, char *buff, uint len);
+void flash_write(uint addr, char *buff, uint len);

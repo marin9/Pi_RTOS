@@ -13,11 +13,13 @@
 #define CS_TA		(1 << 7)
 #define CS_CLRFIFO	(3 << 4)
 
-#define SCLK	11
-#define MOSI	10
-#define MISO	9
-#define CS0		8
-#define CS1		7
+#define SCLK		11
+#define MOSI		10
+#define MISO		9
+#define CS0			8
+#define CS1			7
+
+#define SPI_LED		26
 
 
 void spi_init(uint clk_div) {
@@ -26,15 +28,18 @@ void spi_init(uint clk_div) {
 	gpio_mode(MISO, GPIO_FN0);
 	gpio_mode(CS0, GPIO_FN0);
 	gpio_mode(CS1, GPIO_FN0);
+	gpio_mode(SPI_LED, GPIO_OUT);
 	*SPI_CS = 0;
 	*SPI_CLK = clk_div;
 }
 
 void spi_begin() {
+	gpio_write(SPI_LED, 1);
 	*SPI_CS = CS_CLRFIFO | CS_TA;
 }
 
 void spi_end() {
+	gpio_write(SPI_LED, 0);
 	*SPI_CS = 0;
 }
 

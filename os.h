@@ -11,8 +11,6 @@
 #define ERR_NOBLOCK		3
 #define ERR_OVERFLOW	4
 
-#define CPU_LED			47
-
 typedef void (*func)();
 typedef unsigned int uint;
 

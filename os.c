@@ -5,6 +5,8 @@
 #define TASK_READY		1
 #define TASK_BLOCKED	2
 
+#define CPU_LED			20
+
 #define SYS_ENTRY()		volatile uint i_flag = cpu_interrupts(1)
 #define SYS_EXIT()		cpu_interrupts(i_flag)
 

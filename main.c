@@ -4,8 +4,6 @@
 
 #define READY_LED   21
 
-static char buff[128];
-
 
 static void delay(uint us) {
     us += timer_get();
@@ -19,23 +17,17 @@ static void t0() {
     }
 }
 
-static void t1() {
-    flash_read(0, buff, 128);
-    uart_print(buff);
-}
-
 void setup() {
     // user code
     pic_init();
     uart_init();
     timer_init();
-    spi_init(32);
+    //spi_init(32);
     os_init();
     gpio_mode(READY_LED, GPIO_OUT);
     gpio_write(READY_LED, 1);
 
     delay(4000000);
     task_create(t0, 0, 0);
-    task_create(t1, 0, 0);
     os_start();
 }

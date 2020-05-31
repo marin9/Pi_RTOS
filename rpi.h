@@ -91,5 +91,5 @@ void gpio_enint(uint pin, void (*h)(), int edge);
 void gpio_irq_handler();
 
 
-void flash_read(uint addr, char *buff, uint len);
-void flash_write(uint addr, char *buff, uint len);
+uint flash_read(uint addr, char *buff, uint len);
+uint flash_write(uint addr, char *buff, uint len);

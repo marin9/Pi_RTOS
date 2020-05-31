@@ -1,5 +1,7 @@
 #include "rpi.h"
 
+#define PAGE_LEN    256
+
 #define CMD_WRSR	0x01
 #define CMD_WRITE	0x02
 #define CMD_READ	0x03
@@ -8,8 +10,10 @@
 #define CMD_WREN	0x06
 
 
-void flash_write(uint addr, char *buff, uint len) {
+uint flash_write(uint addr, char *buff, uint len) {
     char cmd[4];
+
+    len = (len > PAGE_LEN) ? PAGE_LEN : len;
 
     // flash memory must be ready
     do {
@@ -34,10 +38,13 @@ void flash_write(uint addr, char *buff, uint len) {
     spi_readwrite(cmd, 4);
     spi_readwrite(buff, len);
     spi_end();
+    return len;
 }
 
-void flash_read(uint addr, char *buff, uint len) {
+uint flash_read(uint addr, char *buff, uint len) {
     char cmd[4];
+
+    len = (len > PAGE_LEN) ? PAGE_LEN : len;
 
     // flash memory must be ready
     do {
@@ -56,4 +63,5 @@ void flash_read(uint addr, char *buff, uint len) {
     spi_readwrite(cmd, 4);
     spi_readwrite(buff, len);
     spi_end();
+    return len;
 }

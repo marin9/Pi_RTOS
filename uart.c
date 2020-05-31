@@ -60,7 +60,6 @@ void uart_hex(uint n) {
 	for (i = 7; i >= 0; --i) {
 		buff[i] = n & 0x0f;
 		n = n >> 4;
-
 		if (buff[i] < 10)
 			buff[i] += '0';
 		else

@@ -4,12 +4,12 @@
 
 #define READY_LED   21
 
-
+/*
 static void delay(uint us) {
     us += timer_get();
     while (timer_get() < us);
 }
-
+*/
 static void t0() {
     while (1) {
         uart_print("Task 0\r\n");
@@ -27,7 +27,8 @@ void setup() {
     gpio_mode(READY_LED, GPIO_OUT);
     gpio_write(READY_LED, 1);
 
-    delay(4000000);
+    //delay(4000000);
+    uart_print("OK\r\n");
     task_create(t0, 0, 0);
     os_start();
 }

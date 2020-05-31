@@ -17,7 +17,7 @@ SRC	+= uart.c
 #SRC	+= spi.c
 #SRC	+= i2c.c
 #SRC	+= pwm.c
-#SRC += flash.c
+#SRC	+= flash.c
 #SRC	+= lib.c
 SRC	+= os.c
 

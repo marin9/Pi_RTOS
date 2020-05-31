@@ -149,6 +149,10 @@ static void idle() {
 
 void os_init() {
 	int i;
+	sched_run = 0;
+	active_task = 0;
+	sys_time = 0;
+
 	for (i = 0; i < PRIO_COUNT; ++i)
 		queue_init(&ready_queue[i]);
 
@@ -156,10 +160,7 @@ void os_init() {
 		task[i].status = TASK_UNUSED;
 
 	queue_init(&sleep_queue);
-	task_create(idle, 0, PRIO_COUNT - 1);
-	active_task = 0;
-	sys_time = 0;
-	sched_run = 0;
+	task_create(idle, 0, PRIO_COUNT - 1);	
 }
 
 void os_start() {
@@ -207,7 +208,7 @@ int task_create(func fn, void *arg, uint prio) {
 
 	queue_push(&ready_queue[prio], &task[i]);
 
-	if (sched_run == 1)
+	if (sched_run)
 		task_yield();
 
 	SYS_EXIT();

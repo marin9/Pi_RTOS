@@ -4,6 +4,8 @@
 #define SYSTMR_BASE		(PERIPH_BASE + 0x003000)
 #define IRQ_BASE		(PERIPH_BASE + 0x00B000)
 #define MBOX_BASE		(PERIPH_BASE + 0x00B800)
+#define CLOCK_BASE		(PERIPH_BASE + 0x101000)
+#define RAND_BASE		(PERIPH_BASE + 0x104000)
 #define GPIO_BASE		(PERIPH_BASE + 0x200000)
 #define UART0_BASE		(PERIPH_BASE + 0x201000)
 #define SPI_BASE 		(PERIPH_BASE + 0x204000)
@@ -86,3 +88,6 @@ void spi_init(uint freq);
 void spi_begin();
 void spi_end();
 void spi_readwrite(char *buff, uint len);
+
+void pwm_init(uint div, uint range);
+int pwm_write(char *buff, uint len);

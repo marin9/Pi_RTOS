@@ -1,5 +1,6 @@
 #include "rpi.h"
 #include "dev.h"
+#include "lib.h"
 #include "os.h"
 
  /*
@@ -72,29 +73,11 @@ void main() {
     timer_init();
     uart_init(115200);
     i2c_init(400000);
-    spi_init(1000000);
+    spi_init(100000);
     ssd1306_init();
     os_init();
 
     ssd1306_clear(0);
-
-    int i;
-    char buff[128];
-
-    buff[0] = 0x03;
-    buff[1] = 0;
-    buff[2] = 0;
-    buff[3] = 0;
-
-    spi_begin();
-    spi_readwrite(buff, 128);
-    spi_end();
-
-    for (i = 4; i <64; ++i) {
-        ssd1306_putc(buff[i]);
-        if (i % 16 == 0)
-            ssd1306_print("\n");
-    }
 
 
     os_start();

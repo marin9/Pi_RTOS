@@ -12,6 +12,8 @@ SRC += spi.c
 SRC	+= timer.c
 SRC	+= pic.c
 SRC	+= os.c
+SRC += string.c
+SRC += flash.c
 SRC += ssd1306.c
 
 INC		:= $(wildcard *.h)

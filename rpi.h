@@ -91,3 +91,6 @@ void spi_readwrite(char *buff, uint len);
 
 void pwm_init(uint div, uint range);
 int pwm_write(char *buff, uint len);
+
+void rand_init();
+int rand_get(int min, int max);

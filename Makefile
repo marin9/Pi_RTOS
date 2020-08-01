@@ -12,6 +12,7 @@ SRC += spi.c
 SRC	+= timer.c
 SRC	+= pic.c
 SRC += pwm.c
+SRC += rand.c
 SRC	+= os.c
 SRC += string.c
 SRC += flash.c

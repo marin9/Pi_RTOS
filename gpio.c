@@ -25,10 +25,9 @@
 #define GPPUD       ((volatile uint*)(GPIO_BASE + 0x94))
 #define GPPUDCLK0   ((volatile uint*)(GPIO_BASE + 0x98))
 #define GPPUDCLK1   ((volatile uint*)(GPIO_BASE + 0x9C))
-#define NUM_GPIO    60
 
 
-static void (*gpio_handlers[NUM_GPIO])() = {0};
+static void (*gpio_handlers[GPIO_COUNT])() = {0};
 
 
 static void delay(uint n) {
@@ -41,21 +40,20 @@ static void gpio_setegde(uint pin, int mod) {
 
     if (pin >= 32) {
         mask = 1 << (pin - 32);
-
         switch (mod) {
-        case GPIO_RISING_EDGE:
+        case GPIO_RSEDG:
             *GPREN1 |= mask;
             break;
-        case GPIO_FALLING_EDGE:
+        case GPIO_FLEDG:
             *GPFEN1 |= mask;
             break;
-        case GPIO_HIGH_EDGE:
+        case GPIO_HGEDG:
             *GPHEN1 |= mask;
             break;
-        case GPIO_LOW_EDGE:
+        case GPIO_LWEDG:
             *GPLEN1 |= mask;
             break;
-        case GPIO_NO_EDGE:
+        case GPIO_NOEDG:
             *GPREN1 &= ~mask;
             *GPFEN1 &= ~mask;
             *GPHEN1 &= ~mask;
@@ -64,21 +62,20 @@ static void gpio_setegde(uint pin, int mod) {
         }
     } else {
         mask = 1 << pin;
-
         switch (mod) {
-        case GPIO_RISING_EDGE:
+        case GPIO_RSEDG:
             *GPREN0 |= mask;
             break;
-        case GPIO_FALLING_EDGE:
+        case GPIO_FLEDG:
             *GPFEN0 |= mask;
             break;
-        case GPIO_HIGH_EDGE:
+        case GPIO_HGEDG:
             *GPHEN0 |= mask;
             break;
-        case GPIO_LOW_EDGE:
+        case GPIO_LWEDG:
             *GPLEN0 |= mask;
             break;
-         case GPIO_NO_EDGE:
+         case GPIO_NOEDG:
             *GPREN0 &= ~mask;
             *GPFEN0 &= ~mask;
             *GPHEN0 &= ~mask;
@@ -104,8 +101,7 @@ static void gpio_clearedge(uint pin) {
 
 void gpio_irq_handler() {
     int i;
-
-    for (i = 0; i < NUM_GPIO; ++i){
+    for (i = 0; i < GPIO_COUNT; ++i) {
         if (gpio_handlers[i] && gpio_getedge(i)) {
             gpio_handlers[i]();
             gpio_clearedge(i);
@@ -117,7 +113,6 @@ void gpio_irq_handler() {
 
 void gpio_mode(uint pin, int mode) {
     int pull;
-
     pull = (mode & 0xf0) >> 4;
     mode = mode & 0x0f;
 
@@ -138,14 +133,12 @@ void gpio_mode(uint pin, int mode) {
     *GPPUD = pull;
 
     delay(200);
-
     if (pin >= 32)
         *GPPUDCLK1 = 1 << (pin - 32);
     else
         *GPPUDCLK0 = 1 << pin;
 
     delay(200);
-
     if (pin >= 32)
         *GPPUDCLK1 = 0;
     else
@@ -154,12 +147,12 @@ void gpio_mode(uint pin, int mode) {
 
 void gpio_write(uint pin, int val) {
     if (pin >= 32) {
-        if(val)
+        if (val)
             *GPSET1 =1 << (pin - 32);
         else
             *GPCLR1 =1 << (pin - 32);
     } else {
-        if(val)
+        if (val)
             *GPSET0 = 1 << pin;
         else
             *GPCLR0 = 1 << pin;
@@ -173,9 +166,9 @@ uint gpio_read(uint pin) {
         return ((*GPLEV0) >> pin) & 1;
 }
 
-void gpio_enint(uint pin, void (*h)(), int edge) {
+void gpio_attachintr(uint pin, void (*handler)(), int edge) {
     if (edge)
-        gpio_handlers[pin] = h;
+        gpio_handlers[pin] = handler;
     else
         gpio_handlers[pin] = 0;
 

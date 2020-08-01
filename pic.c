@@ -24,7 +24,6 @@ static uint pic_ispending(uint irqn) {
 
 void irq_handler() {
 	int i;
-
 	for (i = 0; i < IRQ_COUNT; ++i)
 		if (pic_ispending(i) && irq_handlers[i])
 			irq_handlers[i]();
@@ -33,7 +32,6 @@ void irq_handler() {
 
 void pic_init() {
 	int i;
-
 	*IRQ_DISABLE1 = 0xffffffff;
 	*IRQ_DISABLE1 = 0xffffffff;
 	*IRQ_DISABLE_BASIC = 0xffffffff;
@@ -42,24 +40,39 @@ void pic_init() {
 		irq_handlers[i] = 0;
 }
 
-void pic_register(uint irqn, void (*handler)()) {
-	uint n = irqn % 32;
+void pic_register(uint irq, void (*handler)()) {
+	irq_handlers[irq] = handler;
+}
 
-	irq_handlers[irqn] = handler;
-
-	if (irqn >= 32)
+void pic_enable(uint irq) {
+	uint n = irq % 32;
+	if (irq >= 32)
 		*IRQ_ENABLE2 = 1 << n;
 	else
 		*IRQ_ENABLE1 = 1 << n;
 }
 
-void pic_unregister(uint irqn) {
-	uint n = irqn % 32;
-
-	irq_handlers[irqn] = 0;
-
-	if (irqn >= 32)
+void pic_disable(uint irq) {
+	uint n = irq % 32;
+	if (irq >= 32)
     	*IRQ_DISABLE2 = 1 << n;
 	else
     	*IRQ_DISABLE1 = 1 << n;
+}
+
+uint pic_block() {
+	asm volatile ("mrs r1, cpsr");
+	asm volatile ("mov r0, r1");
+	asm volatile ("and r0, r0, #0x80");
+
+	asm volatile ("orr r1, r1, #0x80");
+	asm volatile ("msr cpsr_c, r1");
+	asm volatile ("bx lr");
+	return 0;
+}
+
+void pic_unblock() {
+	asm volatile ("mrs r0, cpsr");
+	asm volatile ("bic r0, r0, #0x80");
+	asm volatile ("msr cpsr_c, r0");
 }

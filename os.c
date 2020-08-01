@@ -7,8 +7,8 @@
 
 #define CPU_LED			20
 
-#define SYS_ENTRY()		volatile uint i_flag = cpu_interrupts(1)
-#define SYS_EXIT()		cpu_interrupts(i_flag)
+#define SYS_ENTRY()		uint i_flag = pic_block()
+#define SYS_EXIT()		if (!i_flag) pic_unblock()
 
 static volatile uint sched_run;
 static volatile uint sys_time;
@@ -16,7 +16,7 @@ static task_t *active_task;
 static queue_t ready_queue[PRIO_COUNT];
 static queue_t sleep_queue;
 static task_t task[TASK_COUNT + 1];
-static char stack[TASK_COUNT][STACK_SIZE] \
+static char stack[TASK_COUNT + 1][STACK_SIZE] \
 	__attribute__((aligned(8)));
 
 
@@ -166,9 +166,11 @@ void os_init() {
 void os_start() {
 	sched_run = 1;
 	gpio_mode(CPU_LED, GPIO_OUT);
-	pic_register(SYSTMR1_IRQ, os_tick_handler);
-	pic_register(GPIO_IRQ_0, os_gpio_handler);
+	pic_register(IRQ_TMR1, os_tick_handler);
+	pic_register(IRQ_GPIO0, os_gpio_handler);
 	timer_set(TICK_TIME);
+	pic_enable(IRQ_TMR1);
+	pic_enable(IRQ_GPIO0);
 	task_yield();
 }
 
@@ -227,7 +229,7 @@ void task_sleep(uint ticks) {
 }
 
 void task_term() {
-	DISABLE_INTR();
+	pic_block();
 	active_task->status = TASK_UNUSED;
 	task_yield();
 }

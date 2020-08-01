@@ -18,16 +18,18 @@
 #define LCRH_WLEN8	(3 << 5)
 
 
-void uart_init() {
+void uart_init(uint br) {
 	int i;
+	uint ibrd = 48000000 / (16 * br);
+	uint fbrd = ((ibrd * 1000) % 1000) * 64 + 500;
 	*UART0_CR = 0;
 
 	gpio_mode(14, GPIO_FN0);
 	gpio_mode(15, GPIO_FN0);
 
 	*UART0_ICR = 0x7FF;
-    *UART0_IBRD = 27;	// baud rate 115200
-    *UART0_FBRD = 8;
+    *UART0_IBRD = ibrd;
+    *UART0_FBRD = fbrd;
     *UART0_LCRH = LCRH_ENFIFO | LCRH_WLEN8;
     *UART0_CR = CR_EN | CR_RXEN | CR_TXEN;
 
@@ -47,10 +49,21 @@ void uart_putc(char c) {
 
 void uart_print(char *s) {
 	while (*s) {
-		while (*UART0_FR & FR_TXFF);
-		*UART0_DR = *s;
+		uart_putc(*s);
 		++s;
 	}
+}
+
+void uart_read(char* buff, uint len) {
+	uint i;
+	for (i = 0; i < len; ++i)
+		buff[i] = uart_getc();
+}
+
+void uart_write(char* buff, uint len) {
+	uint i;
+	for (i = 0; i < len; ++i)
+		uart_putc(buff[i]);
 }
 
 void uart_hex(uint n) {

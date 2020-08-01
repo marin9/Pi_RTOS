@@ -19,3 +19,8 @@ void timer_set(uint us) {
 	*SYS_TIMER_CS = 1 << 1;
 	*SYS_TIMER_C1 = *SYS_TIMER_CLO + us;
 }
+
+void timer_delay(uint us) {
+	us += *SYS_TIMER_CLO;
+	while (us > *SYS_TIMER_CLO);
+}

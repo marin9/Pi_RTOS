@@ -33,29 +33,10 @@
 #define GPFSEL0     ((volatile uint*)(GPIO_BASE + 0x00))
 
 
-static void delay(uint us) {
-	us += timer_get();
-	while (timer_get() < us)
-		asm volatile("nop");
-}
-
-static int wait_i2c_done() {
-	int timeout = 50;
-
-	while (!(*BSC0_FR & FR_DONE) && --timeout)
-		delay(1000);
-
-	if(!timeout)
-		return -1;
-	else
-		return 0;
-}
-
-
-void i2c_init(){
+void i2c_init(uint freq){
 	*GPFSEL0 &= ~0x3f;
 	*GPFSEL0 |= 0x24;
-	//*BSC0_DIV = 0x100;
+	*BSC0_DIV = (150 * 1000 * 1000) / freq;
 }
 
 int i2c_read(uint id, char *buff, uint len) {
@@ -66,13 +47,12 @@ int i2c_read(uint id, char *buff, uint len) {
 	*BSC0_DLEN = n;
 	*BSC0_FR = CLEAR_STAT;
 	*BSC0_CR = START_READ;
-	if (wait_i2c_done())
-		return -1;
+	while (!(*BSC0_FR & FR_DONE));
 
 	for (i = 0; i < n; ++i)
 		buff[i] = *BSC0_FIFO;
 
-	return n;
+	return *BSC0_FR & FR_ERR;
 }
 
 int i2c_write(uint id, char *buff, uint len) {
@@ -81,55 +61,12 @@ int i2c_write(uint id, char *buff, uint len) {
 
 	*BSC0_ADDR = id;
 	*BSC0_DLEN = n;
-	for (i = 0; i < 16; ++i)
+	for (i = 0; i < n; ++i)
 		*BSC0_FIFO = buff[i];
 
 	*BSC0_FR = CLEAR_STAT;
 	*BSC0_CR = START_WRITE;
-    if (wait_i2c_done())
-		return -1;
+    while (!(*BSC0_FR & FR_DONE));
 
-	return n;
+	return *BSC0_FR & FR_ERR;
 }
-
-
-/*
-24LC128 memory
-
-static void read(uint addr, char *buff, uint len) {
-	uint x = 0;
-	char cmd[2];
-
-	cmd[0] = (addr >> 8) & 0xff;
-	cmd[1] = addr & 0xff;
-	i2c_write(0x50, cmd, 2);
-
-	while (x < len) {
-		x += i2c_read(0x50, buff + x, len - x);
-	}
-}
-
-
-static void write_block(uint addr, char *buff) {
-	char block[16];
-
-	block[0] = (addr >> 8) & 0xff;
-	block[1] = addr & 0xff;
-	memcpy(block + 2, buff, 14);
-
-	i2c_write(0x50, block, 16);
-	delay(10000);
-}
-
-static void write(uint addr, char *buff, uint len) {
-	uint x = 0;
-	uint adr = addr;
-
-	while (x < len) {
-		write_block(adr, buff + x);
-		x += 14;
-		adr += 14;
-	}
-}
-
-*/

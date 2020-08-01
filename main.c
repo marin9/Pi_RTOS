@@ -1,34 +1,84 @@
 #include "rpi.h"
-#include "lib.h"
+#include "dev.h"
 #include "os.h"
 
-#define READY_LED   21
-
-/*
-static void delay(uint us) {
-    us += timer_get();
-    while (timer_get() < us);
-}
-*/
+ /*
 static void t0() {
     while (1) {
-        uart_print("Task 0\r\n");
+        uart_print("Task 100\r\n");
+        task_sleep(100);
+    }
+}
+
+static void t1() {
+    while (1) {
+        uart_print("Task   300\r\n");
+        task_sleep(300);
+    }
+}
+
+static void t2() {
+    while (1) {
+        uart_print("Task     1000\r\n");
         task_sleep(1000);
     }
 }
 
-void setup() {
-    // user code
-    pic_init();
-    uart_init();
-    timer_init();
-    //spi_init(32);
-    os_init();
-    gpio_mode(READY_LED, GPIO_OUT);
-    gpio_write(READY_LED, 1);
+static void t3() {
+    while (1) {
+        uart_print("Task         1900\r\n");
+        task_sleep(1900);
+    }
+}
 
-    //delay(4000000);
-    uart_print("OK\r\n");
+void test1() {
     task_create(t0, 0, 0);
+    task_create(t1, 0, 0);
+    task_create(t2, 0, 0);
+    task_create(t3, 0, 0);
+}
+ */
+
+/*
+static sem_t s;
+
+static void tsk(void *arg) {
+    int i;
+    char *m = (char*)arg;
+
+    while (1) {
+        sem_wait(&s, 1);
+        for (i = 0; i < 5; ++i) {
+            uart_print(m);
+            task_sleep(500);
+        }
+        sem_signal(&s);
+        task_sleep(100);    
+    }
+}
+
+void test2() {
+    sem_init(&s, 1, 1);
+    task_create(tsk, "A\r\n", 0);
+    task_create(tsk, " B\r\n", 0);
+    task_create(tsk, "  C\r\n", 0);
+}
+*/
+
+
+
+void main() {
+    pic_init();
+    timer_init();
+    uart_init(115200);
+    i2c_init(400000);
+    ssd1306_init();
+    os_init();
+
+    ssd1306_clear(0);
+
+
+
     os_start();
 }
+

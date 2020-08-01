@@ -81,3 +81,8 @@ void gpio_irq_handler();
 void i2c_init(uint freq);
 int i2c_read(uint id, char *buff, uint len);
 int i2c_write(uint id, char *buff, uint len);
+
+void spi_init(uint freq);
+void spi_begin();
+void spi_end();
+void spi_readwrite(char *buff, uint len);

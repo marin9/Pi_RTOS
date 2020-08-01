@@ -8,11 +8,11 @@ SRC	:= main.c
 SRC	+= gpio.c
 SRC	+= uart.c
 SRC += i2c.c
+SRC += spi.c
 SRC	+= timer.c
 SRC	+= pic.c
 SRC	+= os.c
 SRC += ssd1306.c
-
 
 INC		:= $(wildcard *.h)
 OBJA	:= $(ASM:%.s=%.o)

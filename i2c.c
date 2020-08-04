@@ -66,7 +66,9 @@ int i2c_write(uint id, char *buff, uint len) {
 
 	*BSC0_FR = CLEAR_STAT;
 	*BSC0_CR = START_WRITE;
-    while (!(*BSC0_FR & FR_DONE));
+    while (!(*BSC0_FR & FR_DONE)) {
+    	asm volatile ("nop");
+    }
 
 	return *BSC0_FR & FR_ERR;
 }

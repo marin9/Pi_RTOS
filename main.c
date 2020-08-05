@@ -80,6 +80,52 @@ void main() {
 
     ssd1306_clear(0);
 
+
+
+
+    timer_delay(7*1000*1000);
+    uart_print("Flash test\r\n");
+
+    char buff[256];
+    memset(buff, 0, 256);
+    sspi_init(6, 13, 26);
+    sspi_setbaud(1000000);
+    sspi_ssinit(19);
+    timer_delay(1000000);
+
+/*
+    sspi_start(19);
+    sspi_send_byte(0x06);
+    sspi_stop(19);
+    timer_delay(1000000);
+
+
+    sspi_start(19);
+    sspi_send_byte(0x02);
+    sspi_send_byte(0x00);
+    sspi_send_byte(0x00);
+    sspi_send_byte(0x00);
+
+    sspi_send_byte('O');
+    sspi_send_byte('K');
+    sspi_send_byte(0x00);
+    sspi_stop(19);
+    timer_delay(1000000);
+
+*/
+    sspi_start(19);
+    sspi_send_byte(0x03);
+    sspi_send_byte(0x00);
+    sspi_send_byte(0x00);
+    sspi_send_byte(0x00);
+
+    int i;
+    for (i = 0; i < 128; ++i)
+        uart_putc(sspi_recv_byte());
+
+    sspi_stop(19);
+
+
     while(1);
 
     os_start();

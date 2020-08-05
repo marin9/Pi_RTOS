@@ -11,7 +11,7 @@ static uint _delay_us;
 #define DELAY()	timer_delay(_delay_us)
 
 
-void sspi_init(uint sck, uint si, uint so) {
+void sspi_init(uint sck, uint so, uint si) {
 	_sck = sck;
 	_si = si;
 	_so = so;
@@ -47,7 +47,7 @@ void sspi_stop(uint ss) {
 void sspi_send_byte(char byte) {
 	int i;
 	for (i = 7; i >= 0; --i) {
-		SO(byte & (i << i));
+		SO(byte & (1 << i));
 		DELAY();
 		SCK(1);
 		DELAY();

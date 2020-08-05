@@ -1,6 +1,6 @@
 #pragma once
 
-void sspi_init(uint sck, uint si, uint so);
+void sspi_init(uint sck, uint so, uint si);
 void sspi_setbaud(uint br);
 void sspi_ssinit(uint pin);
 void sspi_start(uint ss);

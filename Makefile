@@ -19,6 +19,7 @@ SRC += ctype.c
 #SRC += fs.c
 SRC += flash.c
 SRC += ssd1306.c
+SRC += lcd1602.c
 
 INC		:= $(wildcard *.h)
 OBJA	:= $(ASM:%.s=%.o)

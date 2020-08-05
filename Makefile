@@ -17,6 +17,7 @@ SRC	+= os.c
 SRC += string.c
 SRC += ctype.c
 #SRC += fs.c
+SRC += sspi.c
 SRC += flash.c
 SRC += ssd1306.c
 SRC += lcd1602.c

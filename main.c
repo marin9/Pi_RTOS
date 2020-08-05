@@ -80,16 +80,6 @@ void main() {
 
     ssd1306_clear(0);
 
-
-
-
-    lcd1602_init(21, 20, 16,
-                26, 19, 13, 6);
-
-
-    lcd1602_setcursor(1, 5);
-    lcd1602_print("OK");
-    
     while(1);
 
     os_start();

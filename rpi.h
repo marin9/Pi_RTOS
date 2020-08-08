@@ -31,11 +31,18 @@
 #define GPIO_COUNT 		60
 
 #define IRQ_TMR1		1
+#define IRQ_TMR2		2
 #define IRQ_TMR3 		3
+#define IRQ_TMR4		4
+#define IRQ_AUX			29
+#define IRQ_SPI_SLAVE	43
 #define IRQ_GPIO0  		49
 #define IRQ_GPIO1  		50
 #define IRQ_GPIO2  		51
 #define IRQ_GPIO3  		52
+#define IRQ_I2C			53
+#define IRQ_SPI 		54
+#define IRQ_UART		57
 #define IRQ_COUNT		72
 
 #define CPSR_MODE_FIQ	0x11

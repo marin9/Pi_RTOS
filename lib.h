@@ -21,6 +21,7 @@
 #define GET_MIN(a, b)		(((a) < (b))? (a): (b))
 #define GET_ABS(a)			(((a) < 0)? -(a): (a))
 
+
 void *memset(void *s, int c, int n);
 void *memcpy(void *dest, void *src, int n);
 int strcmp(const char *s1, const char *s2);

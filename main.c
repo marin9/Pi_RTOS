@@ -43,7 +43,7 @@ void test1() {
 }
  */
 
-/*
+
 static sem_t s;
 
 static void tsk(void *arg) {
@@ -67,7 +67,7 @@ void test2() {
     task_create(tsk, " B\r\n", 0);
     task_create(tsk, "  C\r\n", 0);
 }
-*/
+
 
 
 
@@ -80,6 +80,11 @@ void main() {
     pwm_init(40000, 0x100);
     ssd1306_init();
     os_init();
+
+
+    test2();
+    os_start();
+    while (1);
 
     ssd1306_clear(0);
 
@@ -127,10 +132,5 @@ void main() {
         uart_putc(sspi_recv_byte());
 
     sspi_stop(19);
-
-
-    while(1);
-
-    os_start();
 }
 

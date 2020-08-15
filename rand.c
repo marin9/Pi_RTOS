@@ -7,7 +7,7 @@
 
 
 void rand_init() {
-   *RNG_STATUS = 0x40000;
+	*RNG_STATUS = 0x40000;
     // mask interrupt
     *RNG_INT_MASK |= 1;
     // enable

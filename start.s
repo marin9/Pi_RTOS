@@ -1,5 +1,6 @@
 .global start
 .global cpu_switch
+.section .init
 
 start:
 	ldr pc, _reset

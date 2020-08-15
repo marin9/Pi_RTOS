@@ -1,9 +1,12 @@
 ENTRY(start)
 SECTIONS {
-	. = 0x8000;
+	. = 0x10000;
+
+	.init : {
+		*(.init*)
+	}
 
 	.text : {
-		start.o(.text*);
 		*(.text*);
 	}
 

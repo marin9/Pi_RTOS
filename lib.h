@@ -27,8 +27,24 @@ typedef unsigned int uint;
 
 void *memset(void *s, int c, int n);
 void *memcpy(void *dest, void *src, int n);
-int strcmp(const char *s1, const char *s2);
+void *memchr(const void *str, int c, uint n);
+int memcmp(const void *str1, const void *str2, uint n);
 int strlen(const char *s);
+int strcmp(const char *s1, const char *s2);
+int strncmp(const char *s1, const char *s2, uint n);
+char *strcpy(char *dest, const char *src);
+char *strncpy(char *dest, const char *src, int n);
+char *strcat(char *dest, const char *src);
+char *strncat(char *dest, const char *src, uint n);
+char *strchr(char *str, int c);
+char *strstr(char *str, const char *find);
+int vssprintf(char *str, char **arg);
+int sprintf(char *buff, char *format, ...);
+
+int atoi(char *str);
+void hex2str(char *str, int n);
+void bin2str(char *str, int n, int b);
+void dec2str(char *str, int n);
 
 int isalnum(int c);
 int isalpha(int c);

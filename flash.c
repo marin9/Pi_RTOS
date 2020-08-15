@@ -10,12 +10,32 @@
 #define PAGE_LEN    256
 
 
+char flash_rdstatus() {
+    char cmd[2];
+
+    cmd[0] = CMD_RDSR;
+    spi_begin();
+    spi_readwrite(cmd, 2);
+    spi_end();
+    return cmd[1];
+}
+
+void flash_wrstatus(char s) {
+    char cmd[2];
+
+    cmd[0] = CMD_RDSR;
+    cmd[1] = s;
+    spi_begin();
+    spi_readwrite(cmd, 2);
+    spi_end();
+}
+
 uint flash_write(uint addr, char *buff, uint len) {
     char cmd[4];
 
     len = (len > PAGE_LEN) ? PAGE_LEN : len;
 
-    // ready?
+    // is ready ?
     do {
         cmd[0] = CMD_RDSR;
         spi_begin();
@@ -46,7 +66,7 @@ uint flash_read(uint addr, char *buff, uint len) {
 
     len = (len > PAGE_LEN) ? PAGE_LEN : len;
 
-    // ready ?
+    // is ready ?
     do {
         cmd[0] = CMD_RDSR;
         spi_begin();

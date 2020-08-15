@@ -90,7 +90,7 @@ void uart_init(uint br) {
     for (i = 0; i < 32; ++i)
     	*UART0_DR;
 
-    *UART0_IMSC = INT_RXR;
+    //*UART0_IMSC = INT_RXR;
 }
 
 void uart_read(char* buff, uint len) {

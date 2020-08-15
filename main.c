@@ -72,6 +72,7 @@ void test2() {
 
 void ui() {
     uart_print("UART interrupt\r\n");
+    uart_getc();
 }
 
 
@@ -85,6 +86,12 @@ void main() {
     pwm_init(40000, 0x100);
     ssd1306_init();
     os_init();
+
+
+
+    pic_register(57, ui);
+    pic_enable(57);
+
 
     test2();
     os_start();

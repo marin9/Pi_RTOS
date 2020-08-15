@@ -6,6 +6,8 @@
 #define UART0_FBRD	((volatile uint*)(UART0_BASE + 0x28))
 #define UART0_LCRH	((volatile uint*)(UART0_BASE + 0x2C))
 #define UART0_CR	((volatile uint*)(UART0_BASE + 0x30))
+#define UART0_IMSC 	((volatile uint*)(UART0_BASE + 0x38))
+#define UART0_MIS 	((volatile uint*)(UART0_BASE + 0x40))
 #define UART0_ICR	((volatile uint*)(UART0_BASE + 0x44))
 
 #define CR_EN		(1 << 0)
@@ -22,6 +24,7 @@ void uart_init(uint br) {
 	int i;
 	uint ibrd = 48000000 / (16 * br);
 	uint fbrd = ((ibrd * 1000) % 1000) * 64 + 500;
+
 	*UART0_CR = 0;
 
 	gpio_mode(14, GPIO_FN0);
@@ -37,52 +40,38 @@ void uart_init(uint br) {
     	*UART0_DR;
 }
 
-uint uart_getc() {
-	while (*UART0_FR & FR_RXFE);
-	return *UART0_DR;
-}
-
-void uart_putc(char c) {
-	while (*UART0_FR & FR_TXFF);
-	*UART0_DR = c;
-}
-
-void uart_print(char *s) {
-	while (*s) {
-		uart_putc(*s);
-		++s;
-	}
-}
-
 void uart_read(char* buff, uint len) {
 	uint i;
-	for (i = 0; i < len; ++i)
-		buff[i] = uart_getc();
+	for (i = 0; i < len; ++i) {
+		while (*UART0_FR & FR_RXFE);
+		buff[i] = *UART0_DR;
+	}
 }
 
 void uart_write(char* buff, uint len) {
 	uint i;
-	for (i = 0; i < len; ++i)
-		uart_putc(buff[i]);
-}
-
-void uart_hex(uint n) {
-	int i;
-	char buff[9];
-
-	for (i = 7; i >= 0; --i) {
-		buff[i] = n & 0x0f;
-		n = n >> 4;
-		if (buff[i] < 10)
-			buff[i] += '0';
-		else
-			buff[i] += ('A'-10);
+	for (i = 0; i < len; ++i) {
+		while (*UART0_FR & FR_TXFF);
+		*UART0_DR = buff[i];
 	}
-	buff[8] = 0;
-	uart_print("0x");
-	uart_print(buff);
 }
 
 void uart_flush() {
 	while (!(*UART0_FR & FR_TXFE));
+}
+
+
+uint uart_getc() {
+	char c;
+	uart_read(&c, 1);
+	return c;
+}
+
+void uart_putc(char c) {
+	uart_write(&c, 1);
+}
+
+void uart_print(char *s) {
+	while (*s)
+		uart_putc(*s++);
 }

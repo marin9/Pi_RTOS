@@ -73,13 +73,12 @@ void timer_set(uint us);
 void timer_delay(uint us);
 
 void uart_init(uint br);
+void uart_read(char* buff, uint len);
+void uart_write(char* buff, uint len);
+void uart_flush();
 uint uart_getc();
 void uart_putc(char c);
 void uart_print(char *s);
-void uart_read(char* buff, uint len);
-void uart_write(char* buff, uint len);
-void uart_hex(uint n);
-void uart_flush();
 
 void gpio_mode(uint pin, int mode);
 void gpio_write(uint pin, int val);

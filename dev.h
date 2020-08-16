@@ -5,8 +5,8 @@ void sspi_setbaud(uint br);
 void sspi_ssinit(uint pin);
 void sspi_start(uint ss);
 void sspi_stop(uint ss);
-void sspi_send_byte(char byte);
-char sspi_recv_byte();
+void sspi_send(char byte);
+char sspi_recv();
 
 void ssd1306_init();
 void ssd1306_clear(char color);

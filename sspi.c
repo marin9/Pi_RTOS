@@ -44,7 +44,7 @@ void sspi_stop(uint ss) {
 	gpio_write(ss, 1);
 }
 
-void sspi_send_byte(char byte) {
+void sspi_send(char byte) {
 	int i;
 	for (i = 7; i >= 0; --i) {
 		SO(byte & (1 << i));
@@ -55,9 +55,10 @@ void sspi_send_byte(char byte) {
 	}
 }
 
-char sspi_recv_byte() {
+char sspi_recv() {
 	int i;
 	char byte = 0;
+
 	for (i = 7; i >= 0; --i) {
 		DELAY();
 		byte |= SI() << i;

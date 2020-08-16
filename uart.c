@@ -71,14 +71,17 @@
 #define IFSL_TX_7_8   (4 << 0) // Transmit FIFO 7/8 full
 
 
+#define UART_RX			15
+#define UART_TX			14
+
 
 void uart_init(uint br) {
 	int i;
 	uint ibrd = 48000000 / (16 * br);
 	uint fbrd = ((ibrd * 1000) % 1000) * 64 + 500;
 
-	gpio_mode(14, GPIO_FN0);
-	gpio_mode(15, GPIO_FN0);
+	gpio_mode(UART_TX, GPIO_FN0);
+	gpio_mode(UART_RX, GPIO_FN0);
 
 	*UART0_CR = 0;
 	*UART0_ICR = 0x7FF;

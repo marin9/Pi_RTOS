@@ -43,7 +43,7 @@ void test1() {
 }
  */
 
-
+/*
 static sem_t s;
 
 static void tsk(void *arg) {
@@ -67,13 +67,9 @@ void test2() {
     task_create(tsk, " B\r\n", 0);
     task_create(tsk, "  C\r\n", 0);
 }
+*/
 
 
-
-void ui() {
-    uart_print("UART interrupt\r\n");
-    uart_getc();
-}
 
 
 
@@ -87,21 +83,11 @@ void main() {
     ssd1306_init();
     os_init();
 
+    //os_start();
 
 
-    pic_register(57, ui);
-    pic_enable(57);
-
-
-    test2();
-    os_start();
-    while (1);
-
-    ssd1306_clear(0);
-
-
-
-
+/*
+    sspi init
     timer_delay(7*1000*1000);
     uart_print("Flash test\r\n");
 
@@ -111,8 +97,9 @@ void main() {
     sspi_setbaud(1000000);
     sspi_ssinit(19);
     timer_delay(1000000);
-
+*/
 /*
+    //sspi write
     sspi_start(19);
     sspi_send_byte(0x06);
     sspi_stop(19);
@@ -132,6 +119,9 @@ void main() {
     timer_delay(1000000);
 
 */
+
+/*
+    sspi read
     sspi_start(19);
     sspi_send_byte(0x03);
     sspi_send_byte(0x00);
@@ -143,5 +133,7 @@ void main() {
         uart_putc(sspi_recv_byte());
 
     sspi_stop(19);
+*/
+
 }
 

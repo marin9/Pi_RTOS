@@ -1,5 +1,15 @@
 #pragma once
 
+#define TMRS_COUNT		4
+
+void tmr_tick();
+void tmr_init(uint id, uint inval, uint periodic);
+void tmr_start(uint id);
+void tmr_stop(uint id);
+void tmr_set(uint id, uint inval);
+uint tmr_get(uint id);
+void tmr_attachintr(uint id, void (*func)());
+
 void sspi_init(uint sck, uint so, uint si);
 void sspi_setbaud(uint br);
 void sspi_ssinit(uint pin);

@@ -71,6 +71,21 @@ void test2() {
 
 
 
+void t0() {
+    uart_print(" T0\r\n");
+}
+
+void t1() {
+    uart_print("  T1\r\n");
+}
+
+void t2() {
+    uart_print("   T2\r\n");
+}
+
+void t3() {
+    uart_print("    T3\r\n");
+}
 
 
 void main() {
@@ -84,6 +99,24 @@ void main() {
     os_init();
 
     //os_start();
+
+
+    tmr_init(0, 250, 1);
+    tmr_init(1, 500, 1);
+    tmr_init(2, 1000, 1);
+    tmr_init(3, 2000, 1);
+
+    tmr_attachintr(0, t0);
+    tmr_attachintr(1, t1);
+    tmr_attachintr(2, t2);
+    tmr_attachintr(3, t3);
+
+    tmr_start(0);
+    tmr_start(1);
+    tmr_start(2);
+    tmr_start(3);
+
+    while (1);
 
 
 /*

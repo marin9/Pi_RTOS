@@ -26,6 +26,7 @@ SRC += ctype.c
 # Devices ###########
 SRC += sspi.c
 SRC += flash.c
+SRC += stimer.c
 SRC += ssd1306.c
 SRC += lcd1602.c
 #####################

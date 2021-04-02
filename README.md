@@ -3,6 +3,7 @@
 Simple real-time operating system for Raspberry Pi Zero.
 
 **Features:**
+
 OS:
 - Priority preemptive scheduler
 - Binary and counting semaphore
@@ -22,6 +23,7 @@ External devices:
 
 
 **Usage:**
+
     1) Write your code into main.c file
     2) OS configuration parameters are in os.h file
     3) make

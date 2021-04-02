@@ -9,7 +9,7 @@
 
 #define DEC2ASCII(dec)		((dec) + 0x30)
 #define ASCII2DEC(asc)		((asc) - 0x30)
-#define HEX2ASCII(hex)  	(((hex) > 0x09) ? ((hex) + 0x37): ((hex) + 0x30)) 
+#define HEX2ASCII(hex)  	(((hex) > 0x09) ? ((hex) + 0x37): ((hex) + 0x30))
 #define ASCII2HEX(asc)  	(((asc) > 0x39) ? ((asc) - 0x37): ((asc) - 0x30))
 
 #define GET_BYTE0(b)		((b >> 0) & 0xFF)
@@ -21,9 +21,7 @@
 #define GET_MIN(a, b)		(((a) < (b))? (a): (b))
 #define GET_ABS(a)			(((a) < 0)? -(a): (a))
 
-
 typedef unsigned int uint;
-
 
 void *memset(void *s, int c, int n);
 void *memcpy(void *dest, void *src, int n);
@@ -40,6 +38,7 @@ char *strchr(char *str, int c);
 char *strstr(char *str, const char *find);
 int vssprintf(char *str, char **arg);
 int sprintf(char *buff, char *format, ...);
+int printf(char *format, ...);
 
 int atoi(char *str);
 void hex2str(char *str, int n);

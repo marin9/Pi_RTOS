@@ -1,5 +1,4 @@
 #pragma once
-
 #define STACK_SIZE		4096
 #define TICK_TIME		1000
 #define TASK_COUNT		16

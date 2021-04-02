@@ -3,9 +3,7 @@
 #define PERIPH_BASE		0x20000000
 #define SYSTMR_BASE		(PERIPH_BASE + 0x003000)
 #define IRQ_BASE		(PERIPH_BASE + 0x00B000)
-#define MBOX_BASE		(PERIPH_BASE + 0x00B800)
 #define CLOCK_BASE		(PERIPH_BASE + 0x101000)
-#define RAND_BASE		(PERIPH_BASE + 0x104000)
 #define GPIO_BASE		(PERIPH_BASE + 0x200000)
 #define UART0_BASE		(PERIPH_BASE + 0x201000)
 #define SPI_BASE 		(PERIPH_BASE + 0x204000)
@@ -28,12 +26,9 @@
 #define GPIO_FLEDG		2
 #define GPIO_HGEDG	    3
 #define GPIO_LWEDG		4
-#define GPIO_COUNT 		60
+#define GPIO_COUNT 		32
 
-#define IRQ_TMR1		1
-#define IRQ_TMR2		2
-#define IRQ_TMR3 		3
-#define IRQ_TMR4		4
+#define IRQ_TMR 		1
 #define IRQ_AUX			29
 #define IRQ_SPI_SLAVE	43
 #define IRQ_GPIO0  		49
@@ -43,7 +38,7 @@
 #define IRQ_I2C			53
 #define IRQ_SPI 		54
 #define IRQ_UART		57
-#define IRQ_COUNT		72
+#define IRQ_COUNT		64
 
 #define CPSR_MODE_FIQ	0x11
 #define CPSR_MODE_IRQ	0x12
@@ -67,18 +62,19 @@ void pic_disable(uint irq);
 uint pic_block();
 void pic_unblock();
 
+// Don't use timer when use OS
 void timer_init();
+void timer_clrif();
 uint timer_get();
 void timer_set(uint us);
 void timer_delay(uint us);
 
 void uart_init(uint br);
-void uart_read(char* buff, uint len);
-void uart_write(char* buff, uint len);
+void uart_interrupt(uint tx, uint rx);
+uint uart_read(char* buff, uint len, uint block);
+uint uart_write(char* buff, uint len, uint block);
 void uart_flush();
-uint uart_getc();
-void uart_putc(char c);
-void uart_print(char *s);
+void uart_deinit();
 
 void gpio_mode(uint pin, int mode);
 void gpio_write(uint pin, int val);
@@ -96,7 +92,5 @@ int i2c_read(uint id, char *buff, uint len);
 int i2c_write(uint id, char *buff, uint len);
 
 void pwm_init(uint div, uint range);
-int pwm_write(char *buff, uint len);
-
-void rand_init();
-int rand_get(int min, int max);
+uint pwm_write(char *buff, uint len);
+void pwm_deinit();

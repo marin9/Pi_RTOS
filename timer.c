@@ -4,10 +4,13 @@
 #define SYS_TIMER_CLO	((volatile uint*)(SYSTMR_BASE + 0x04))
 #define SYS_TIMER_CHI	((volatile uint*)(SYSTMR_BASE + 0x08))
 #define SYS_TIMER_C1	((volatile uint*)(SYSTMR_BASE + 0x10))
-#define SYS_TIMER_C3	((volatile uint*)(SYSTMR_BASE + 0x18))
 
 
 void timer_init() {
+	*SYS_TIMER_CS = 1 << 1;
+}
+
+void timer_clrif() {
 	*SYS_TIMER_CS = 1 << 1;
 }
 

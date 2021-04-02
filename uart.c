@@ -23,39 +23,31 @@
 #define RSREC_PE	(1 << 1)
 #define RSREC_FE	(1 << 0)
 
-#define FR_TXFE		(1 << 7)
-#define FR_RXFF		(1 << 6)
-#define FR_TXFF		(1 << 5)
-#define FR_RXFE		(1 << 4)
-#define FR_BUSY		(1 << 3)
-#define FR_CST		(1 << 0)
+#define FR_TXFE		(1 << 7)	// TX FIFO empty
+#define FR_RXFF		(1 << 6)	// RX FIFO full
+#define FR_TXFF		(1 << 5)	// TX FIFO full
+#define FR_RXFE		(1 << 4)	// RX FIFO empty
+#define FR_BUSY		(1 << 3)	// UART transmitting data
+#define FR_CST		(1 << 0)	// Clear to send, 1 when nUARTCTS is low
 
-#define LCRH_SPS	(1 << 7)
-#define LCRH_WLEN5	(0 << 5)
-#define LCRH_WLEN6	(1 << 5)
-#define LCRH_WLEN7	(2 << 5)
-#define LCRH_WLEN8	(3 << 5)
-#define LCRH_FEN	(1 << 4)
-#define LCRH_STP2	(1 << 3)
-#define LCRH_EPS 	(1 << 2)
-#define LCRH_PEN	(1 << 1)
-#define LCRH_BRK	(1 << 0)
+#define LCRH_SPS	(1 << 7)	// Stick parity select
+#define LCRH_WLEN5	(0 << 5)	// Word length 5 bits
+#define LCRH_WLEN6	(1 << 5)	// Word length 6 bits
+#define LCRH_WLEN7	(2 << 5)	// Word length 7 bits
+#define LCRH_WLEN8	(3 << 5)	// Word length 8 bits
+#define LCRH_FEN	(1 << 4)	// Enable FIFO
+#define LCRH_STP2	(1 << 3)	// Two stop bit select
+#define LCRH_EPS 	(1 << 2)	// Even parity select (0-odd, 1-even)
+#define LCRH_PEN	(1 << 1)	// Parity enable
+#define LCRH_BRK	(1 << 0)	// Send break
 
-#define CR_CTSEN	(1 << 15)
-#define CR_RTSEN	(1 << 14)
-#define CR_RTS		(1 << 11)
-#define CR_RXEN		(1 << 9)
-#define CR_TXEN		(1 << 8)
-#define CR_LBE		(1 << 7)
-#define CR_EN		(1 << 0)
-
-#define INT_OER 	(1 << 10)
-#define INT_BER 	(1 << 9)
-#define INT_PER 	(1 << 8)
-#define INT_FER 	(1 << 7)
-#define INT_RTR 	(1 << 6)
-#define INT_TXR		(1 << 5)
-#define INT_RXR		(1 << 4)
+#define CR_CTSEN	(1 << 15)	// Clear to send enable
+#define CR_RTSEN	(1 << 14)	// Request to send enable
+#define CR_RTS		(1 << 11)	// Request to send
+#define CR_RXEN		(1 << 9)	// Receive enable
+#define CR_TXEN		(1 << 8)	// Transmit enable
+#define CR_LBE		(1 << 7)	// Loopback enable
+#define CR_EN		(1 << 0)	// UART enable
 
 #define IFSL_RXIFLSEL (7 << 3) // Receive interrupt FIFO level select
 #define IFSL_RX_1_8   (0 << 3) // Receive FIFO 1/8 full
@@ -70,9 +62,25 @@
 #define IFSL_TX_3_4   (3 << 0) // Transmit FIFO 3/4 full
 #define IFSL_TX_7_8   (4 << 0) // Transmit FIFO 7/8 full
 
+#define IMSC_OEIM	(1 << 10)	// Overrun error interrupt mask
+#define IMSC_BEIM	(1 << 9)	// Break error interrupt mask
+#define IMSC_PEIM	(1 << 8)	// Parity error interrupt mask
+#define IMSC_FEIM	(1 << 7)	// Framing error interrupt mask
+#define IMSC_RTIM	(1 << 6)	// Receive timeout interrupt mask
+#define IMSC_TXIM	(1 << 5)	// Transmit interrupt mask
+#define IMSC_RXIM	(1 << 4)	// Receive interrupt mask
 
-#define UART_RX			15
-#define UART_TX			14
+#define ICR_OEIC	(1 << 10)	// Overrun error interrupt clear
+#define ICR_BEIC	(1 << 9)	// Break error interrupt clear
+#define ICR_PEIC	(1 << 8)	// Parity error interrupt clear
+#define ICR_FEIC	(1 << 7)	// Framing error interrupt clear
+#define ICR_RTIC	(1 << 6)	// Receive timeout interrupt clear
+#define ICR_TXIC	(1 << 5)	// Transmit interrupt clear
+#define ICR_RXIC	(1 << 4)	// Receive interrupt clear
+
+
+#define UART_TX		14
+#define UART_RX		15
 
 
 void uart_init(uint br) {
@@ -92,42 +100,53 @@ void uart_init(uint br) {
 
     for (i = 0; i < 32; ++i)
     	*UART0_DR;
-
-    //*UART0_IMSC = INT_RXR;
 }
 
-void uart_read(char* buff, uint len) {
-	uint i;
-	for (i = 0; i < len; ++i) {
-		while (*UART0_FR & FR_RXFE);
-		buff[i] = *UART0_DR;
-	}
+void uart_deinit() {
+	*UART0_CR = 0;
 }
 
-void uart_write(char* buff, uint len) {
-	uint i;
-	for (i = 0; i < len; ++i) {
-		while (*UART0_FR & FR_TXFF);
-		*UART0_DR = buff[i];
+void uart_interrupt(uint tx, uint rx) {
+	uint mask = 0;
+
+	if (tx)
+		mask |= IMSC_TXIM;
+
+	if (rx)
+		mask |= IMSC_RXIM;
+
+	*UART0_IMSC = mask;
+	*UART0_IFLS = IFSL_RX_1_8 | IFSL_TX_1_8;
+}
+
+uint uart_read(char* buff, uint len, uint block) {
+	uint s = 0;
+	while (s < len) {
+		if (block) {
+			while (*UART0_FR & FR_RXFE);
+		} else {
+			if (*UART0_FR & FR_RXFE)
+				break;
+		}
+		buff[s++] = *UART0_DR;
 	}
+	return s;
+}
+
+uint uart_write(char* buff, uint len, uint block) {
+	uint s = 0;
+	while (s < len) {
+		if (block) {
+			while (*UART0_FR & FR_TXFF);
+		} else {
+			if (*UART0_FR & FR_TXFF)
+				break;
+		}
+	 	*UART0_DR = buff[s++];
+	}
+	return s;
 }
 
 void uart_flush() {
 	while (!(*UART0_FR & FR_TXFE));
-}
-
-
-uint uart_getc() {
-	char c;
-	uart_read(&c, 1);
-	return c;
-}
-
-void uart_putc(char c) {
-	uart_write(&c, 1);
-}
-
-void uart_print(char *s) {
-	while (*s)
-		uart_putc(*s++);
 }

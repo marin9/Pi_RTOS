@@ -4,18 +4,20 @@
 #define SPI_FIFO	((volatile uint*)(SPI_BASE + 0x04))
 #define SPI_CLK		((volatile uint*)(SPI_BASE + 0x08))
 #define SPI_DLEN	((volatile uint*)(SPI_BASE + 0x0C))
-#define SPI_LTOH	((volatile uint*)(SPI_BASE + 0x10))
 
+#define CS_CSPOL2	(1 << 23) // CS2 polarity
+#define CS_CSPOL1	(1 << 22) // CS1 polarity
+#define CS_CSPOL0	(1 << 21) // CS0 polarity
 #define CS_RXF		(1 << 20) // RX FIFO full
 #define CS_RXR		(1 << 19) // RX FIFO need reading
-#define CS_TXD		(1 << 18)
-#define CS_RXD		(1 << 17)
-#define CS_DONE		(1 << 16)
-#define CS_INTR		(1 << 10) // interrupt on RXR=1
-#define CS_INTD		(1 << 9) // interrupt on done
-#define CS_TA		(1 << 7)
-#define CS_CSPOL	(1 << 6) // cs active at
-#define CS_CLRFIFO	(3 << 4) // tx and rx
+#define CS_TXD		(1 << 18) // TX has space
+#define CS_RXD		(1 << 17) // RX not empty
+#define CS_DONE		(1 << 16) // Transfer done
+#define CS_INTR		(1 << 10) // Interrupt on RXR=1
+#define CS_INTD		(1 << 9) // Interrupt on done=1
+#define CS_TA		(1 << 7) // Transfer active
+#define CS_CSPOL	(1 << 6) // CS active at
+#define CS_CLRFIFO	(3 << 4) // Clear FIFO RX or TX
 #define CS_CPOL		(1 << 3) // reset state of clock
 #define CS_CPHA 	(1 << 2) // clock phase, first sclk transition
 							 // 0 - middle of data bit

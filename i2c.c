@@ -7,24 +7,24 @@
 #define BSC0_FIFO	((volatile uint*)(I2C_BASE + 0x10))
 #define BSC0_DIV	((volatile uint*)(I2C_BASE + 0x14))
 
-#define CR_EN 		(1 << 15)
-#define CR_INTR 	(1 << 10)
-#define CR_INTT 	(1 << 9)
-#define CR_INTD 	(1 << 8)
-#define CR_ST 		(1 << 7)
-#define CR_CLEAR 	(1 << 4)
-#define CR_READ 	(1 << 0)
+#define CR_EN 		(1 << 15) // I2C enable
+#define CR_INTR 	(1 << 10) // Interrupt on RXR=1
+#define CR_INTT 	(1 << 9) // Interrupt on TXW=1
+#define CR_INTD 	(1 << 8) // Interrupt on DONE=1
+#define CR_ST 		(1 << 7) // Start transfer
+#define CR_CLEAR 	(1 << 4) // Clear FIFO
+#define CR_READ 	(1 << 0) // Read transfer (0-write)
 
-#define FR_CLKT 	(1 << 9)
-#define FR_ERR 		(1 << 8)
-#define FR_RXF 		(1 << 7)
-#define FR_TXE	 	(1 << 6)
-#define FR_RXD 		(1 << 5)
-#define FR_TXD 		(1 << 4)
-#define FR_RXR 		(1 << 3)
-#define FR_TXW 		(1 << 2)
-#define FR_DONE 	(1 << 1)
-#define FR_TA 		(1 << 0)
+#define FR_CLKT 	(1 << 9) // Clock stretch timeout
+#define FR_ERR 		(1 << 8) // ACK error
+#define FR_RXF 		(1 << 7) // RX FIFO full
+#define FR_TXE	 	(1 << 6) // TX FIFO empty
+#define FR_RXD 		(1 << 5) // RX not empty
+#define FR_TXD 		(1 << 4) // TX not full
+#define FR_RXR 		(1 << 3) // RX FIFO full
+#define FR_TXW 		(1 << 2) // TX FIFO full
+#define FR_DONE 	(1 << 1) // Transfer done
+#define FR_TA 		(1 << 0) // Transfer active
 
 #define START_READ 	(CR_EN | CR_ST | CR_CLEAR | CR_READ)
 #define START_WRITE (CR_EN | CR_ST)

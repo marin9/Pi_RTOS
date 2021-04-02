@@ -1,5 +1,5 @@
 #include "lib.h"
-
+#include "rpi.h"
 
 void *memset(void *s, int c, int n) {
 	int p;
@@ -90,7 +90,7 @@ char *strncpy(char *dest, const char *src, int n) {
     int i;
     for (i = 0; src[i] && (i < n); ++i)
         dest[i] = src[i];
-   
+
     dest[i] = 0;
     return dest;
 }
@@ -133,11 +133,11 @@ char *strstr(char *str, const char *find) {
 int atoi(char *str) {
 	int i;
 	int res = 0;
-   
+
     for (i = 0; str[i] != 0; ++i)
-        res = res * 10 + str[i] - '0'; 
- 
-    return res; 
+        res = res * 10 + str[i] - '0';
+
+    return res;
 }
 
 void hex2str(char *str, int n) {
@@ -277,4 +277,12 @@ int vssprintf(char *str, char **arg) {
 
 int sprintf(char *buff, char *format, ...) {
 	return vssprintf(buff, &format);
+}
+
+int printf(char *format, ...) {
+	int len;
+	char buff[128];
+	len = vssprintf(buff, &format);
+	uart_write(buff, len, 1);
+	return len;
 }

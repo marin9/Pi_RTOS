@@ -1,7 +1,7 @@
 .global start
 .global cpu_switch
-.section .init
 
+.section .init
 start:
 	ldr pc, _reset
    	ldr pc, _undef
@@ -32,9 +32,10 @@ init:
   	ldmia   r0!, {r2, r3, r4, r5, r6, r7, r8, r9}
   	stmia   r1!, {r2, r3, r4, r5, r6, r7, r8, r9}
 
-	bl main
-	b .
-
+	bl setup
+ll:
+	bl loop
+	b ll
 
 interrupt:
 	sub lr, lr, #4

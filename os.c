@@ -160,16 +160,16 @@ void os_init() {
 		task[i].status = TASK_UNUSED;
 
 	queue_init(&sleep_queue);
-	task_create(idle, 0, PRIO_COUNT - 1);	
+	task_create(idle, 0, PRIO_COUNT - 1);
 }
 
 void os_start() {
 	sched_run = 1;
 	gpio_mode(CPU_LED, GPIO_OUT);
-	pic_register(IRQ_TMR1, os_tick_handler);
+	pic_register(IRQ_TMR, os_tick_handler);
 	pic_register(IRQ_GPIO0, os_gpio_handler);
 	timer_set(TICK_TIME);
-	pic_enable(IRQ_TMR1);
+	pic_enable(IRQ_TMR);
 	pic_enable(IRQ_GPIO0);
 	task_yield();
 }

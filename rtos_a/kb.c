@@ -30,6 +30,11 @@
 #define DR_KEY_STATE		0xF0
 #define DR_KEY_CODE			0x0F
 
+#define KEY_ALT			0x1A
+#define KEY_SHL			0x1B
+#define KEY_SHR			0x1C
+#define KEY_SYM			0x1D
+
 
 // alt + Rshift = caps lock
 // alt + Lshift = num lock
@@ -38,7 +43,7 @@
 int kb_init() {
 	char buff[2];
 	buff[0] = CR | (1 << 7);
-	buff[1] = CR_USE_MODS | CR_REPORT_MODS;
+	buff[1] = CR_USE_MODS | CR_KEY_INT;
 	return i2c_write(KB_ADDR, buff, 2);
 }
 
@@ -49,14 +54,11 @@ int kb_read(char *key, char *stat, char *caps) {
 	if (i2c_write(0x1F, buff, 1))
 		return -1;
 
-	timer_delay(10000);
-
 	if (i2c_read(0x1F, buff, 2))
 		return -2;
 
 	*key = buff[1];
 	*stat = buff[0];
-	timer_delay(10000);
 
 	buff[0] = SR;
 	if (i2c_write(0x1F, buff, 1))
@@ -76,8 +78,5 @@ int kb_setbacklight(char b) {
 	buff[0] = BR | (1 << 7);
 	buff[1] = b;
 
-	timer_delay(100000);
-	i2c_write(KB_ADDR, buff, 2);
-	timer_delay(100000);
-	return 0;
+	return i2c_write(KB_ADDR, buff, 2);
 }

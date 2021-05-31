@@ -12,39 +12,38 @@ void print(char *s) {
 	uart_write(s, strlen(s), 1);
 }
 
+
+void kb_int() {
+	char k = 0, s = 0, c = 0;
+
+	kb_read(&k, &s, &c);
+
+	if (k != 0 && s == 1)
+		putc(k);
+}
+
 void setup() {
     pic_init();
     timer_init();
     uart_init(115200);
-    i2c_init(100000); // 1 --> 4 ?
+    i2c_init(400000);
     spi_init(100000);
     pwm_init(40000, 0x100);
+	kb_init();
     os_init();
 
     // User code when using OS
-kb_init();
+	kb_setbacklight(100);
+	gpio_mode(21, GPIO_IN);
+	gpio_attachintr(21, kb_int, GPIO_FLEDG);
+	pic_register(IRQ_GPIO0, gpio_irq_handler);
+	pic_enable(IRQ_GPIO0);
+	pic_unblock();
+
     // Start OS scheduer, otherwise start loop
     //os_start();
 }
 
 void loop() {
     // User code when OS is unused
-	char k = 0, s = 0, c = 0;
-	kb_read(&k, &s, &c);
-
-	putc(k);
-	putc('\r');
-	putc('\n');
-	if (c & (1 << 5)) print(" caps lock\r\n");
-	if (c & (1 << 6)) print(" num lock\r\n");
-	if (k != 0) print(" not zero\r\n");
-
-	timer_delay(100000);
-	if (k == '0') kb_setbacklight(0);
-	if (k == '1') kb_setbacklight(50);
-	if (k == '2') kb_setbacklight(100);
-	if (k == '3') kb_setbacklight(150);
-	if (k == '4') kb_setbacklight(200);
-	if (k == '5') kb_setbacklight(255);
-	timer_delay(100000);
 }

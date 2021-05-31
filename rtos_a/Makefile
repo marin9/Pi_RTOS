@@ -25,6 +25,7 @@ SRC	+= os.c
 SRC += string.c
 SRC += ctype.c
 # Devices ###########
+SRC += kb.c
 SRC += flash.c
 SRC += ssd1306.c
 #####################
